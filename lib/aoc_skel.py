@@ -5,6 +5,7 @@ use_sample = True
 SAMPLE_INPUTFILE = './sample_input.txt'
 INPUTFILE = './input.txt'
 
+
 def part1():
   return None
 
