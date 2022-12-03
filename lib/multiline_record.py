@@ -33,14 +33,14 @@ class TestMultilineFile(unittest.TestCase):
   def test_mlf(self):
     testdir = pathlib.Path(__file__).parent
     testfile = testdir / 'multiline_record_test_input'
-    records = list(multiline_file(testfile))
+    records = tuple(multiline_file(testfile))
     self.assertEqual(records,
-        ['apple\nbanana\ncherry\n',
+        ('apple\nbanana\ncherry\n',
          'x y z\n1 2 3\n',
          'whitespace on next line\n \n',
          'next one\n',
          'arga arga\n',
-         'final line with no following blank line\n'])
+         'final line with no following blank line\n'))
 
 
 if __name__ == "__main__":
