@@ -28,15 +28,10 @@ def part1(rs):
 
 def part2(rs):
   psum = 0
-  i = 0
-  while i < len(rs):
-    a = rs[i]
-    b = rs[i + 1]
-    c = rs[i + 2]
-    badge = tuple(set.intersection(set(a), set(b), set(c)))[0]
+  for sackgroup in zip(rs[0::3], rs[1::3], rs[2::3]):
+    badge = tuple(set.intersection(*[set(x) for x in sackgroup]))[0]
     pb = priority(badge)
     psum += pb
-    i += 3
 
   return psum
 
