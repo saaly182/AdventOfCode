@@ -1,3 +1,5 @@
+
+
 apple
 banana
 cherry
@@ -5,5 +7,14 @@ cherry
 x y z
 1 2 3
 
-last one
+whitespace on next line
+ 
 
+next one
+
+
+
+arga arga
+
+
+final line with no following blank line
