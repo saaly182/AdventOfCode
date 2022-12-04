@@ -8,26 +8,34 @@ SAMPLE_INPUTFILE = './sample_input.txt'
 INPUTFILE = './input.txt'
 
 
-def fully_contains(r1, r2):
-  "Return True if r1 or r2 is fully contained within the other."
-  a, b, c, d = r1 + r2
+def fully_contains(ranges):
+  a, b, c, d = ranges
   if (a >= c and b <= d) or (c >= a and d <= b):
     return True
   return False
 
 
+def overlaps(ranges):
+  a, b, c, d = ranges
+  if b < c or d < a:
+    return False
+  return True
+
+
 def part1(assignment_pairs):
   count = 0
-
   for ap in assignment_pairs:
-    if fully_contains((ap[0], ap[1]), (ap[2], ap[3])):
+    if fully_contains(ap):
       count += 1
-  
   return count
 
 
-def part2():
-  return None
+def part2(assignment_pairs):
+  count = 0
+  for ap in assignment_pairs:
+    if overlaps(ap):
+      count += 1
+  return count
 
 
 def main():
@@ -45,7 +53,7 @@ def main():
       assignment_pairs.append(section_ranges)
 
   print("Part 1 answer =", part1(assignment_pairs))
-  print("Part 2 answer =", part2())
+  print("Part 2 answer =", part2(assignment_pairs))
 
 
 if __name__ == '__main__':
