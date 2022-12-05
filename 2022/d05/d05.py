@@ -10,7 +10,24 @@ INPUTFILE = './input.txt'
 
 
 def genstacks(slines):
-  # info is easier to parse in transposed form with a stack on each line
+  # Info is easier to parse in transposed form with a stack on each line.
+  # And AoC made this relatively easy because the input files have the proper
+  # whitespace right-padding.
+  # So, convert this:
+  #         [D]    
+  #     [N] [C]    
+  #     [Z] [M] [P]
+  #      1   2   3 
+  # ----- to this:
+  #      [[ 
+  #     1ZN 
+  #      ]] 
+  #      [[[
+  #     2MCD
+  #      ]]]
+  #      [  
+  #     3P  
+  #      ]  
   tlines = [''.join(chars).strip() for chars in zip(*reversed(slines))]
   stacks = {}
   for s in tlines:
