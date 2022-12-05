@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import copy
 import re
 
 debug = False
@@ -57,8 +58,14 @@ def part1(stacks, moves):
   return ''.join(msg)
 
 
-def part2():
-  return None
+def part2(stacks, moves):
+  for count, src, dst in moves:
+    crates = reversed([stacks[src].pop() for _ in range(count)])
+    stacks[dst].extend(crates)
+  msg = []
+  for sk in sorted(stacks.keys()):
+    msg.append(stacks[sk][-1])
+  return ''.join(msg)
 
 
 def main():
@@ -68,8 +75,8 @@ def main():
 
   stacks, moves = parse_input(fname)
 
-  print("Part 1 answer =", part1(stacks, moves))
-  print("Part 2 answer =", part2())
+  print("Part 1 answer =", part1(copy.deepcopy(stacks), moves))
+  print("Part 2 answer =", part2(copy.deepcopy(stacks), moves))
 
 
 if __name__ == '__main__':
