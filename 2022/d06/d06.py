@@ -11,10 +11,14 @@ INPUTFILE = './input.txt'
 
 
 def part1(stream, marker_size):
+  found = False
   for i in range(marker_size - 1, len(stream)):
     if len(set(stream[i - marker_size + 1:i + 1])) == marker_size:
+      found = True
       break
-  return i + 1
+  if found:
+    return i + 1
+  return None
 
 
 def part2(stream, marker_size):
