@@ -40,12 +40,16 @@ class Directory:
     self.filebytes = 0
 
   def addfile(self, filerecord):
+    # Using the assert here because I wasn't sure if the AoC input would
+    # revisit any dirs. This assert catches that, and I'd have had to
+    # account for that if it fired. But the input does not revisit any
+    # dirs. Left the assert in anyway. Similar for the assert in addsubdir().
     assert filerecord not in self.files
     self.files.append(filerecord)
     self.filebytes += filerecord[2]
 
   def addsubdir(self, dirrecord):
-    assert dirrecord not in self.subdirs
+    assert dirrecord[1] not in self.subdirs
     self.subdirs[dirrecord[1]] = Directory(f'{self.path}/{dirrecord[1]}', self)
 
   def show(self, indent):
