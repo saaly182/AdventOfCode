@@ -15,7 +15,20 @@ def part1(rd):
 
 
 def part2(rd):
-  return None
+  disk_size = 70000000
+  free_target = 30000000
+  free_current = disk_size - rd.treesize()
+  must_delete = free_target - free_current
+
+  best_dir_size = disk_size
+  q = [rd]
+  while q:
+    d = q.pop(0)
+    tsd = d.treesize()
+    if tsd >= must_delete and tsd < best_dir_size:
+      best_dir_size = tsd
+    q.extend(d.getsubdirs())
+  return best_dir_size
 
 
 class Directory:
