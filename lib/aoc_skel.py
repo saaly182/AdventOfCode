@@ -1,11 +1,5 @@
 #!/usr/bin/python3 -u
 
-debug = False
-use_sample = True
-SAMPLE_INPUTFILE = './sample_input.txt'
-INPUTFILE = './input.txt'
-
-
 def part1():
   return None
 
@@ -15,11 +9,7 @@ def part2():
 
 
 def main():
-  fname = INPUTFILE
-  if use_sample:
-    fname = SAMPLE_INPUTFILE
-
-  with open(fname) as file:
+  with open('input.txt') as file:
     for line in file:
       line = line.rstrip()
       # do something with input
