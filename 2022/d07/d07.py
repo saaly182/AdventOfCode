@@ -1,32 +1,32 @@
 #!/usr/bin/python3 -u
 
-def part1(rd):
+def part1(rootdir):
   limit = 100000
   dsum = 0
 
-  q = [rd]
+  q = [rootdir]
   while q:
     d = q.pop(0)
-    tsd = d.treesize()
-    if tsd <= limit:
-      dsum  += tsd
+    dts = d.treesize()
+    if dts <= limit:
+      dsum += dts
     q.extend(d.getsubdirs())
   return dsum
 
 
-def part2(rd):
+def part2(rootdir):
   disk_size = 70000000
   free_target = 30000000
-  free_current = disk_size - rd.treesize()
+  free_current = disk_size - rootdir.treesize()
   must_delete = free_target - free_current
 
   best_dir_size = disk_size
-  q = [rd]
+  q = [rootdir]
   while q:
     d = q.pop(0)
-    tsd = d.treesize()
-    if tsd >= must_delete and tsd < best_dir_size:
-      best_dir_size = tsd
+    dts = d.treesize()
+    if dts >= must_delete and dts < best_dir_size:
+      best_dir_size = dts
     q.extend(d.getsubdirs())
   return best_dir_size
 
