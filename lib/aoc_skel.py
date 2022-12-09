@@ -9,13 +9,18 @@ def part2():
 
 
 def main():
+  sample_input = '''\
+  '''.split('\n')
+
+  main_input = []
   with open('input.txt') as file:
     for line in file:
       line = line.rstrip()
-      # do something with input
+      main_input.append(line)
 
-  print("Part 1 answer =", part1())
-  print("Part 2 answer =", part2())
+  for inp in (sample_input, main_input):
+    print("Part 1 answer =", part1())
+    print("Part 2 answer =", part2())
 
 
 if __name__ == '__main__':
