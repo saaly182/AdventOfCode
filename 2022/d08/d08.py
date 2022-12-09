@@ -51,9 +51,9 @@ def part2(trees):
     for c, t in enumerate(trow):
       tree_view = []
 
-      trees_L = list(reversed(trow[:c]))
+      trees_L = reversed(trow[:c])
       trees_R = trow[c + 1:]
-      trees_U = list(reversed(tcol[c][:r]))
+      trees_U = reversed(tcol[c][:r])
       trees_D = tcol[c][r + 1:]
 
       for tree_list in (trees_L, trees_R, trees_U, trees_D):
