@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import math
 import textwrap
 
 
@@ -38,7 +39,37 @@ def part1(trees):
 
 
 def part2(trees):
-  return None
+  colmax = len(trees) - 1
+  scenic_score_max = 0
+  tcol = []
+
+  # precompute all the tree columns
+  for c in range(colmax + 1):
+    tcol.append([x[c] for x in trees])
+
+  for r, trow in enumerate(trees):
+    for c, t in enumerate(trow):
+      tree_view = []
+
+      trees_L = list(reversed(trow[:c]))
+      trees_R = trow[c + 1:]
+      trees_U = list(reversed(tcol[c][:r]))
+      trees_D = tcol[c][r + 1:]
+
+      for tree_list in (trees_L, trees_R, trees_U, trees_D):
+        tree_count = 0
+        for tn in tree_list:
+          tree_count += 1
+          if tn >= t:
+            break
+        tree_view.append(tree_count)
+
+      scenic_score = math.prod(tree_view)
+
+      if scenic_score > scenic_score_max:
+        scenic_score_max = scenic_score
+
+  return scenic_score_max
 
 
 def main():
