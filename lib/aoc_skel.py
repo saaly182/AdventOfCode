@@ -1,5 +1,8 @@
 #!/usr/bin/python3 -u
 
+import textwrap
+
+
 def part1():
   return None
 
@@ -9,8 +12,8 @@ def part2():
 
 
 def main():
-  sample_input = '''\
-  '''.split('\n')
+  sample_input = textwrap.dedent('''\
+  ''').rstrip().split('\n')
 
   main_input = []
   with open('input.txt') as file:
