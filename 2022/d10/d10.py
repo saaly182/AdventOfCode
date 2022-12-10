@@ -22,7 +22,39 @@ def part1(prog):
   return sigsum
 
 
+def pixel(cycle):
+  row = cycle // 40
+  col = cycle % 40
+  return row, col
+
+
+def showcrt(crt):
+  for line in crt:
+    print(''.join(line))
+
+
 def part2(prog):
+  cycle = 0
+  regx = 1
+  crt = [[' '] * 40 for _ in range(6)]
+
+  def updatecrt():
+    nonlocal cycle
+    row, col = pixel(cycle)
+    sprite = (regx - 1, regx, regx + 1)
+    if col in sprite:
+      crt[row][col] = '#'
+    cycle += 1
+
+  for inst in prog:
+    updatecrt()
+
+    if inst[0] == 'addx':
+      updatecrt()
+      regx += inst[1]
+
+  showcrt(crt)
+
   return None
 
 
