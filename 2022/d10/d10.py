@@ -17,7 +17,7 @@ def part1(prog):
         sigsum += cycle * regx
 
     if inst.opcode == 'addx':
-      regx += inst[1]
+      regx += inst.operand
 
   return sigsum
 
