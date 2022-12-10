@@ -41,7 +41,30 @@ def part1(moves):
 
 
 def part2(moves):
-  return None
+  knots = [(0, 0)] * 10
+  t9visit = set()
+  t9visit.add(knots[9])
+
+  delta = {'L': (-1,  0), 'R': ( 1,  0), 'U': ( 0,  1), 'D': ( 0, -1)}
+
+  for dcmd, steps in moves:
+    for i in range(steps):
+
+      # move the head knot
+      head = knots[0]
+      head_new = (head[0] + delta[dcmd][0],  head[1] + delta[dcmd][1])
+      knots[0] = head_new
+
+      # move the nine other knots
+      for i in range(1, 10):
+        head = knots[i - 1]
+        tail = knots[i]
+        tail_new = tailmove(head, tail)
+        knots[i] = tail_new
+
+      t9visit.add(knots[9])
+
+  return len(t9visit)
 
 
 def main():
