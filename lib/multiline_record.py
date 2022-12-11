@@ -27,6 +27,24 @@ def multiline_file(filename):
       yield R
 
 
+def multiline_data(iterable):
+  """
+  Generator of multiline records that use blank elements as the
+  record separator. Return each record as a tuple of strings,
+  and treat all blank lines as non-records.
+  """
+  R = []
+  for x in iterable:
+    if x.strip() == '':
+      if R:
+        yield tuple(R)
+        R = []
+    else:
+      R.append(x)
+  if R:
+    yield tuple(R)
+
+
 class TestMultilineFile(unittest.TestCase):
   # Note: I'm intentionally just using a simple test input file
   # and not doing things like mocking open().
@@ -41,6 +59,29 @@ class TestMultilineFile(unittest.TestCase):
          'next one\n',
          'arga arga\n',
          'final line with no following blank line\n'))
+
+
+class TestMultilineData(unittest.TestCase):
+  def test_mld(self):
+    testdata = [
+        'index 0:',
+        'gilligan',
+        'skipper',
+        '',
+        'index 1:'
+        'maryann',
+        'ginger',
+        '',
+        'index 2:'
+        'professor',
+        'mr. howell',
+        'mrs howell',
+    ]
+    records = tuple(multiline_data(testdata))
+    self.assertEqual(records,
+        (('index 0:', 'gilligan', 'skipper'),
+         ('index 1:' 'maryann', 'ginger'),
+         ('index 2:' 'professor', 'mr. howell', 'mrs howell')))
 
 
 if __name__ == "__main__":
