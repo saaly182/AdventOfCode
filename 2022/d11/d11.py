@@ -10,9 +10,21 @@ import textwrap
 
 
 class Monkey():
-  def __init__(self, descriptor, monkeys):
+  # class vars to track the ultimate modulo divisor
+  #
+  # NOTE: I was stumped on part 2. It was obvious that the test divisors
+  # were all prime, and that the "squaring" monkeys were blowing up the
+  # problem. I tried to think of some practical way to track prime factors,
+  # but it was clear that the "addition" monkeys would thwart any attempt
+  # to smartly update prime factors. Ultimately I got the modulo hint from
+  # https://www.reddit.com/r/adventofcode/comments/zim5o6/2022_day11_part2_python_brute_force/
+  divs = {1}
+  moddiv = 1
+
+  def __init__(self, descriptor, monkeys, wdiv):
     self.monkeys = monkeys  # need to know all the other monkeys
     self.inspect_count = 0
+    self.wdiv = wdiv
     for d in descriptor:
       match d.split():
         case ['Monkey', midstr]:
@@ -21,9 +33,14 @@ class Monkey():
           self.items = [int(x.removesuffix(',')) for x in items]
         case ['Operation:', 'new', '=', 'old', op, val2]:
           self.op = op
-          self.val2 = val2  # leaving as string here b/c it can be 'old'
+          if val2 == 'old':
+            self.val2 = 0
+          else:
+            self.val2 = int(val2)
         case ['Test:', 'divisible', 'by', divisor]:
           self.divisor = int(divisor)
+          Monkey.divs.add(self.divisor)
+          Monkey.moddiv = math.prod(Monkey.divs)
         case ['If', ('true:' | 'false:') as b, 'throw', 'to', 'monkey', target]:
           if b == 'true:':
             self.throw_t = int(target)
@@ -41,16 +58,20 @@ class Monkey():
 
   def update_worry_level(self, worry_level):
     wl = worry_level
-    opmap = {'+': wl.__add__, '*': wl.__mul__}
 
-    if self.val2 == 'old':
+    if self.val2 == 0:
       x = wl
     else:
-      x = int(self.val2)
+      x = self.val2
 
-    wl = opmap[self.op](x)
+    if self.op == '+':
+      wl = (wl + x) % Monkey.moddiv
+    elif self.op == '*':
+      wl = (wl * x) % Monkey.moddiv
+    else:
+      raise ValueError
 
-    wl = wl // 3
+    wl = wl // self.wdiv
     
     return wl
 
@@ -70,8 +91,8 @@ class Monkey():
       self.monkeys[target].recv(wl)
 
 
-def part1(monkeys):
-  for round in range(20):
+def part1(monkeys, rounds):
+  for round in range(rounds):
     for mid in monkeys:
       monkeys[mid].process()
 
@@ -84,11 +105,11 @@ def part1(monkeys):
   return monkey_business
 
 
-def part2(monkeys):
-  return None
+def part2(monkeys, rounds):
+  return part1(monkeys, rounds)
 
 
-def make_monkeys(inp):
+def make_monkeys(inp, wdiv):
   monkeys = {}
   mid = None  # monkey id
 
@@ -96,7 +117,7 @@ def make_monkeys(inp):
     match = re.fullmatch(r'Monkey (\d+):', descriptor[0])
     assert match
     mid = int(match.group(1))
-    monkeys[mid] = Monkey(descriptor, monkeys)
+    monkeys[mid] = Monkey(descriptor, monkeys, wdiv)
 
   return monkeys
 
@@ -139,9 +160,10 @@ def main():
       main_input.append(line)
 
   for inp in (sample_input, main_input):
-    monkeys = make_monkeys(inp)
-    print("Part 1 answer =", part1(monkeys))
-    print("Part 2 answer =", part2(monkeys))
+    part1_monkeys = make_monkeys(inp, wdiv=3)
+    part2_monkeys = make_monkeys(inp, wdiv=1)
+    print("Part 1 answer =", part1(part1_monkeys, rounds=20))
+    print("Part 2 answer =", part2(part2_monkeys, rounds=10000))
 
 
 if __name__ == '__main__':
