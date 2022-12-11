@@ -23,8 +23,7 @@ def part1(prog):
 
 
 def pixel(cycle):
-  row = cycle // 40
-  col = cycle % 40
+  row, col = divmod(cycle, 40)
   return row, col
 
 
