@@ -101,23 +101,6 @@ def make_monkeys(inp):
   return monkeys
 
 
-def part2(monkeys):
-  return None
-
-
-def make_monkeys(inp):
-  monkeys = {}
-  mid = None  # monkey id
-
-  for descriptor in multiline_data(inp):
-    match = re.fullmatch(r'Monkey (\d+):', descriptor[0])
-    assert match
-    mid = int(match.group(1))
-    monkeys[mid] = Monkey(descriptor, monkeys)
-
-  return monkeys
-
-
 def main():
   sample_input = textwrap.dedent('''\
       Monkey 0:
