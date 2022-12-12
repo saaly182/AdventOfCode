@@ -22,11 +22,6 @@ def part1(prog):
   return sigsum
 
 
-def pixel(cycle):
-  row, col = divmod(cycle, 40)
-  return row, col
-
-
 def part2(prog):
   cycle = 0
   regx = 1
@@ -34,7 +29,7 @@ def part2(prog):
 
   for inst in prog:
     for tick in range(inst.nticks):
-      row, col = pixel(cycle)
+      row, col = divmod(cycle, 40)  # pixel row,col
       sprite = (regx - 1, regx, regx + 1)
       if col in sprite:
         crt[row][col] = '#'
