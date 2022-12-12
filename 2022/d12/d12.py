@@ -1,14 +1,14 @@
 #!/usr/bin/python3 -u
 
+import math
 import string
 import textwrap
 
 
-def shortest_path(hm, start_v, end_v):
-  'Return shortest path in the heightmap from start_v to end_v.'
-  G = {}  # graph of each vertex's neighbors
+def make_graph(hm):
+  'Return adjacency graph of hm.'
+  G = {}
 
-  # build adjacency graph
   for row, col in hm:
     edges = []
     val = hm[(row, col)]
@@ -18,22 +18,30 @@ def shortest_path(hm, start_v, end_v):
           edges.append(adj)
     G[(row, col)] = tuple(edges)
 
+  return G
+
+
+def shortest_path(hm, start_v, end_v):
+  'Return shortest path in the heightmap from start_v to end_v.'
+  G = make_graph(hm)
+
   # now use Dijkstra's algorithm
   # based on https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
-  inf = 999_999_999_999
   dist = {}
   prev = {}
   queue = set(G)
   for p in G:  # p = point
-    dist[p] = inf
+    dist[p] = math.inf
   dist[start_v] = 0
 
   while queue:
-    min_dist = inf
+    min_dist = math.inf
     for p in queue:
       if dist[p] < min_dist:
         min_dist = dist[p]
         u = p
+    if min_dist == math.inf:
+      return None
     if u == end_v:
       break
     queue.remove(u)
@@ -63,8 +71,16 @@ def part1(hm, start_v, end_v):
   return len(path) - 1
 
 
-def part2():
-  return None
+def part2(hm, end_v):
+  min_pathlen = math.inf
+  for p in hm:
+    if hm[p] == 1:  # 'a'
+      path = shortest_path(hm, p, end_v)
+      if path:
+        pathlen = len(path) - 1
+        min_pathlen = min(pathlen, min_pathlen)
+
+  return min_pathlen
 
 
 def make_heightmap(inp):
@@ -110,7 +126,7 @@ def main():
   for inp in (sample_input, main_input):
     hm, start_v, end_v = make_heightmap(inp)
     print("Part 1 answer =", part1(hm, start_v, end_v))
-    print("Part 2 answer =", part2())
+    print("Part 2 answer =", part2(hm, end_v))
 
 
 if __name__ == '__main__':
