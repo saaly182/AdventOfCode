@@ -64,6 +64,7 @@ def shortest_path(hm, start_v, end_v):
 
   return path
 
+
 def part1(hm, start_v, end_v):
   path = shortest_path(hm, start_v, end_v)
   # path includes start and end, but problem wants the
