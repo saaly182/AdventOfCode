@@ -35,6 +35,9 @@ def shortest_path(hm, start_v, end_v):
   dist[start_v] = 0
 
   while queue:
+    # NOTE: This is a totally brute force min-priority-queue, but it works.
+    # I probably won't come back and redo this, because it requires a min-
+    # priority-queue with decrease_key functionality for dijkstra.
     min_dist = math.inf
     for p in queue:
       if dist[p] < min_dist:
