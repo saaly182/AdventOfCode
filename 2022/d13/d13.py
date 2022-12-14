@@ -5,7 +5,6 @@ sys.path.append('../../lib')
 
 import functools
 from multiline_record import multiline_data
-import textwrap
 
 
 def make_pairs(inp):
@@ -76,43 +75,23 @@ def part2(pairs):
   return answer
 
 
-def main():
-  sample_input = textwrap.dedent('''\
-      [1,1,3,1,1]
-      [1,1,5,1,1]
-
-      [[1],[2,3,4]]
-      [[1],4]
-
-      [9]
-      [[8,7,6]]
-
-      [[4,4],4,4]
-      [[4,4],4,4,4]
-
-      [7,7,7,7]
-      [7,7,7]
-
-      []
-      [3]
-
-      [[[]]]
-      [[]]
-
-      [1,[2,[3,[4,[5,6,7]]]],8,9]
-      [1,[2,[3,[4,[5,6,0]]]],8,9]
-  ''').rstrip().split('\n')
-
-  main_input = []
-  with open('input.txt') as file:
+def slurp(fname):
+  lines = []
+  with open(fname) as file:
     for line in file:
-      line = line.rstrip()
-      main_input.append(line)
+      lines.append(line.rstrip())
+  return lines
+
+
+def main():
+  sample_input = slurp('sample_input.txt')
+  main_input = slurp('input.txt')
 
   for inp in (sample_input, main_input):
     pairs = make_pairs(inp)
     print("Part 1 answer =", part1(pairs))
     print("Part 2 answer =", part2(pairs))
+    print()
 
 
 if __name__ == '__main__':
