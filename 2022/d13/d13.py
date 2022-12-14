@@ -3,6 +3,7 @@
 import sys
 sys.path.append('../../lib')
 
+import functools
 from multiline_record import multiline_data
 import textwrap
 
@@ -65,8 +66,14 @@ def part1(pairs):
   return isum
 
 
-def part2(inp):
-  return None
+def part2(pairs):
+  pkts = [[[2]], [[6]]]
+  for p in pairs:
+    pkts.extend(p)
+  pkts.sort(key=functools.cmp_to_key(mycmp))
+  answer = (pkts.index([[2]]) + 1) * (pkts.index([[6]]) + 1)
+
+  return answer
 
 
 def main():
