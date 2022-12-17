@@ -9,7 +9,8 @@ from utils import drange
 class Cave:
   def __init__(self, rockpaths):
     self.rockpaths = rockpaths
-    self.sandpoint = (500, 0)
+    self.sand_source = (500, 0)
+    self.sand_count = 0
 
     # establish boundaries
     _xs = [u[0] for v in rockpaths for u in v]
@@ -19,10 +20,10 @@ class Cave:
     self.miny = 0
     self.maxy = max(_ys) + 1
 
-    # create cave as all open space and the sand origination point
+    # create cave as all open space and the sand source
     self.cave = [['.'] * (self.maxx - self.minx + 1)
                     for _ in range(self.maxy + 1)]
-    self.cave[self.sandpoint[1]][self.sandpoint[0] - self.minx] = '+'
+    self._mark_sand_source()
 
     # add in the rock paths
     for rp in self.rockpaths:
@@ -41,15 +42,52 @@ class Cave:
             self.cave[y1][x] = '#'
         p1 = p2
 
+  def _mark_sand_source(self):
+    self.cave[self.sand_source[1]][self.sand_source[0] - self.minx] = '+'
+
   def show(self):
     for row in self.cave:
       print(''.join(row))
+    print()
+
+  def add_sand(self):
+    'Add a grain of sand and return True if it comes to rest, False otherwise.'
+    sx = self.sand_source[0] - self.minx
+    sy = self.sand_source[1]
+
+    # The added buffer points on the side ensure the sand the sand
+    # never falls off the sides. Also assume the input is such that
+    # the source point cannot become completely blocked.
+    while sy < self.maxy:
+      moved = False
+      for dx, dy in ((0, 1), (-1, 1), (1, 1)):
+        sx2 = sx + dx
+        sy2 = sy + dy
+        if self.cave[sy2][sx2] == '.':
+          self.cave[sy][sx] = '.'
+          self.cave[sy2][sx2] = 'o'
+          sx = sx2
+          sy = sy2
+          moved = True
+          break
+      if not moved:
+        # sand came to rest, so stop trying to fall deeper
+        break
+
+    # put the '+' back on the sand source
+    self._mark_sand_source()
+
+    if not moved:
+      self.sand_count += 1
+      return True
+    return False  # finally fell off the bottom
 
 
 def part1(rockpaths):
   cave = Cave(rockpaths)
-  cave.show()
-  return None
+  while cave.add_sand():
+    pass
+  return cave.sand_count
 
 
 def part2(rockpaths):
@@ -76,8 +114,6 @@ def slurp(fname):
 def main():
   sample_input = slurp('sample_input.txt')
   main_input = slurp('input.txt')
-
-  main_input = sample_input
 
   for inp in (sample_input, main_input):
     rockpaths = parse(inp)
