@@ -9,6 +9,9 @@ from utils import drange
 
 class Cave1:
   # based on 2D array
+  # NOTE: I could get rid of this original part1 implementation and make Cave2
+  #       work for part1, but I wanted to keep the code for the two different
+  #       approaches.
   def __init__(self, rockpaths):
     self.rockpaths = rockpaths
     self.sand_source = (500, 0)
