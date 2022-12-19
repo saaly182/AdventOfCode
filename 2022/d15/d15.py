@@ -9,13 +9,14 @@ def dist(a, b):
   return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
-def neighborhood(a, d):
+def neighborhood(a, d, row):
   'Return all points within dist d of point a.'
   n = set()
-  for dy in range(-d, d + 1):
-    z = d - abs(dy)
-    for dx in range(-z, z + 1):
-      n.add((a[0] + dx, a[1] + dy))
+  dy = row - a[1]
+  z = d - abs(dy)
+  for dx in range(-z, z + 1):
+    x = a[0] + dx
+    n.add((x, row))
   return n
 
 
@@ -40,7 +41,7 @@ def no_beacon_count(grid, row):
   return count
 
 
-def part1(beac_near_sens):
+def part1(beac_near_sens, row):
   grid = defaultdict(lambda: '.')
   for sens in beac_near_sens:
     grid[sens] = 'S'
@@ -49,10 +50,10 @@ def part1(beac_near_sens):
     s = sens
     b = beac_near_sens[s]
     d = dist(s, b)
-    for n in neighborhood(s, d):
+    for n in neighborhood(s, d, row):
       if grid[n] == '.':
         grid[n] = '#'
-  return no_beacon_count(grid, 10)
+  return no_beacon_count(grid, row)
 
 
 def part2(beac_near_sens):
@@ -78,13 +79,18 @@ def slurp(fname):
 
 def main():
   sample_input = slurp('sample_input.txt')
-  main_input = slurp('input.txt')
+  beac_near_sens = parse(sample_input)
+  print("Sample Input")
+  print("Part 1 answer =", part1(beac_near_sens, 10))
+  print("Part 2 answer =", part2(beac_near_sens))
+  print()
 
-  for inp in (sample_input, main_input):
-    beac_near_sens = parse(inp)
-    print("Part 1 answer =", part1(beac_near_sens))
-    print("Part 2 answer =", part2(beac_near_sens))
-    print()
+  main_input = slurp('input.txt')
+  beac_near_sens = parse(main_input)
+  print("Main Input")
+  print("Part 1 answer =", part1(beac_near_sens, 2000000))
+  print("Part 2 answer =", part2(beac_near_sens))
+  print()
 
 
 if __name__ == '__main__':
