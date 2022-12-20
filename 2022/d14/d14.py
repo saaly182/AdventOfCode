@@ -4,7 +4,7 @@ import sys
 sys.path.append('../../lib')
 
 from collections import defaultdict
-from utils import drange
+from aocutils import drange
 
 
 class Cave1:
