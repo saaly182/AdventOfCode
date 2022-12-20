@@ -49,6 +49,7 @@ class TestDrange(unittest.TestCase):
     x = list(drange(9, 9))
     self.assertEqual(x, [9])
 
+
 class TestMergeIntervals(unittest.TestCase):
   def test_merge_intervals(self):
     i1 = [[10, 20], [1, 5], [11, 21], [5, 8], [0, 1]]

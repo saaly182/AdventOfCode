@@ -74,7 +74,7 @@ def get_sboundary(sens, beac):
 
 
 def intersect(p1, p2, row):
-  'Return x-intersection of line seqment and horizontal line, perhaps None.'
+  'Return x-intersection of line segment and horizontal line, perhaps None.'
   # This function is not general purpose. It's specialized to this problem
   # with 45-deg line segments and int coordinates.
   x1, y1, x2, y2 = p1[0], p1[1], p2[0], p2[1]
@@ -116,7 +116,7 @@ def find_hole(row, sbounds, bmax):
   i_prev = m_intervals[0]
   for i_this in m_intervals[1:]:
     if i_this[0] - i_prev[1] == 2:
-      x  = i_this[0] - 1
+      x = i_this[0] - 1
       return x
 
   return None
