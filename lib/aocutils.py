@@ -4,6 +4,8 @@ Various utility functions for AoC
 """
 
 import copy
+import heapq
+import math
 import unittest
 
 
@@ -40,6 +42,48 @@ def merge_intervals(input_intervals):
   return stack
 
 
+def shortest_paths(G, src):
+  """
+  Return distance and path info from src to all other vertices in the graph.
+
+  Uses the "lazy" Dijkstra algorithm, which basically means the
+  min-priority-queue does not have a decrease-key method. This is not space
+  efficient, but AoC problems don't tend to have *huge* graphs.
+
+  G structure: dict with vertex key and value of adjacency list with
+  (vertex, edge length) elements.
+
+  reference: http://nmamano.com/blog/dijkstra/dijkstra.html
+  """
+  dist = {}
+  prev = {}
+  seen = {}
+  minq = []
+  for v in G:
+    dist[v] = math.inf
+    seen[v] = False
+  dist[src] = 0
+  heapq.heappush(minq, (0, src))
+
+  while minq:
+    _, u = heapq.heappop(minq)
+    if seen[u]:
+      continue  # already seen this vertex
+    seen[u] = True
+
+    for v, e in G[u]:
+      alt = dist[u] + e
+      if alt < dist[v]:
+        dist[v] = alt
+        prev[v] = u
+        heapq.heappush(minq, (alt, v))
+
+  return dist, prev
+
+
+###########################################################################
+
+
 class TestDrange(unittest.TestCase):
   def test_drange(self):
     x = list(drange(3, 6))
@@ -58,6 +102,29 @@ class TestMergeIntervals(unittest.TestCase):
     i1 = [[10, 20], [-1, 5], [6, 6], [90, 99], [91, 98]]
     i2 = merge_intervals(i1)
     self.assertEqual(i2, [[-1, 5], [6, 6], [10, 20], [90, 99]])
+
+
+class TestShortestPaths(unittest.TestCase):
+  def test_shortest_paths(self):
+    G = {
+        'a': (('b', 1),),
+        'b': (('a', 1),),
+    }
+    dist, prev = shortest_paths(G, 'a')
+    self.assertEqual(dist, {'a': 0, 'b': 1})
+    self.assertEqual(prev, {'b': 'a'})
+
+    G = {
+        'A': [('B', 1), ('C', 5)],
+        'B': [('A', 1), ('D', 3)],
+        'C': [('A', 5), ('D', 2), ('E', 7)],
+        'D': [('C', 2), ('B', 3)],
+        'E': [('C', 7), ('F', 8)],
+        'F': [('E', 8)],
+    }
+    dist, prev = shortest_paths(G, 'A')
+    self.assertEqual(dist, {'A': 0, 'B': 1, 'C': 5, 'D': 4, 'E': 12, 'F': 20})
+    self.assertEqual(prev, {'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'E'})
 
 
 if __name__ == "__main__":
