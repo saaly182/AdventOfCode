@@ -8,8 +8,10 @@ from collections import defaultdict
 import functools
 import re
 
+# globals
 _flowrates = None
 _time_from = None
+_time_limit = None
 
 
 # DP version
@@ -17,7 +19,7 @@ _time_from = None
 def moving_score(path):
   'Return the score and time left as of right when the last valve opened.'
   if path == ('AA',):
-    return 0, 30
+    return 0, _time_limit
 
   tail1 = path[-1]
   tail2 = path[-2]
@@ -80,18 +82,13 @@ def max_press_release(start_v, t_limit, valves):
   return mpr
 
 
-def part1(G):
-  global _flowrates, _time_from
-
-  # we only care about valves with non-zero flow rates
-  _flowrates = {k: v for k, v in _flowrates.items() if v > 0}
-
+def part1():
+  # NOTE: I could not see how to make this problem tractable with
+  # a 30-step lookahead and a branching factor of 3-5. The hint I
+  # eventually took from reddit was to only pay attention to the
+  # non-zero valves and only ever visit-and-open a valve.
   valves = set(_flowrates)
-  _time_from = {'AA': shortest_paths(G, 'AA')[0]}
-  for v in valves:
-    _time_from[v] = shortest_paths(G, v)[0]
-
-  return max_press_release(('AA',), 30, valves)
+  return max_press_release(('AA',), _time_limit, valves)
 
 
 def part2():
@@ -99,7 +96,8 @@ def part2():
 
 
 def parse(inp):
-  global _flowrates
+  global _flowrates, _time_from
+
   G = defaultdict(set)
   _flowrates = {}
   spec = r'Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? ([A-Z ,]+)'
@@ -112,7 +110,13 @@ def parse(inp):
       G[v].add((u, 1))
       G[u].add((v, 1))
 
-  return G
+  # we only care about valves with non-zero flow rates
+  _flowrates = {k: v for k, v in _flowrates.items() if v > 0}
+
+  valves = set(_flowrates)
+  _time_from = {'AA': shortest_paths(G, 'AA')[0]}
+  for v in valves:
+    _time_from[v] = shortest_paths(G, v)[0]
 
 
 def slurp(fname):
@@ -121,12 +125,15 @@ def slurp(fname):
 
 
 def main():
+  global _time_limit
   sample_input = slurp('sample_input.txt')
   main_input = slurp('input.txt')
 
   for inp in (sample_input, main_input):
-    G = parse(inp)
-    print("Part 1 answer =", part1(G))
+    parse(inp)
+    _time_limit = 30
+    print("Part 1 answer =", part1())
+    _time_limit = 26
     print("Part 2 answer =", part2())
     print()
 
