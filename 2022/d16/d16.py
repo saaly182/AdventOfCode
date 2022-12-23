@@ -8,7 +8,7 @@ from collections import defaultdict
 import functools
 import re
 
-_flowmap = None
+_flowrates = None
 _time_from = None
 
 
@@ -36,7 +36,7 @@ def static_score(path, duration):
   score = 0
   for v in path:
     if v != 'AA':
-      score += duration * _flowmap[v]
+      score += duration * _flowrates[v]
   return score
 
 
@@ -81,12 +81,12 @@ def max_press_release(start_v, t_limit, valves):
 
 
 def part1(G):
+  global _flowrates, _time_from
+
   # we only care about valves with non-zero flow rates
-  global _flowmap, _time_from
+  _flowrates = {k: v for k, v in _flowrates.items() if v > 0}
 
-  _flowmap = {k: v for k, v in _flowmap.items() if v > 0}
-
-  valves = set(_flowmap)
+  valves = set(_flowrates)
   _time_from = {'AA': shortest_paths(G, 'AA')[0]}
   for v in valves:
     _time_from[v] = shortest_paths(G, v)[0]
@@ -99,15 +99,15 @@ def part2():
 
 
 def parse(inp):
-  global _flowmap
+  global _flowrates
   G = defaultdict(set)
-  _flowmap = {}
+  _flowrates = {}
   spec = r'Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? ([A-Z ,]+)'
   for line in inp:
     match = re.fullmatch(spec, line)
     assert match
     v = match.group(1)
-    _flowmap[v] = int(match.group(2))
+    _flowrates[v] = int(match.group(2))
     for u in match.group(3).split(', '):
       G[v].add((u, 1))
       G[u].add((v, 1))
