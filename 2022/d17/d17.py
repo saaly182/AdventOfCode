@@ -15,8 +15,8 @@ class Chamber():
     self.rockrow = None  # index of the rock's lowest row
     self.rockheight = 0
 
-  def show(self, msg=None):
-    if not debug:
+  def show(self, msg=None, always_show=False):
+    if not debug and not always_show:
       return
 
     print('--')
@@ -44,7 +44,7 @@ class Chamber():
 
   def pushrock(self):
     "Push the rock left or right, if possible."
-    jetdir = next(self.getjet)
+    jetdir = next(self.getjet)[0]
     self.show(f'pushrock in, pushing {jetdir}')
     assert jetdir in ('<', '>')
     incr = 1
@@ -113,7 +113,7 @@ class Chamber():
       for i, x in enumerate(maprow1):
         if x == 1:
           maprow1[i] = 2
-    self.show('rock just fixed in place')
+    self.show('rock just fixed in place', always_show=False)
 
     # update highrock
     rocktop = self.rockrow + self.rockheight - 1
@@ -126,7 +126,7 @@ def part1(jet_pattern):
   getrock = rockgen()
   c = Chamber(getjet)
   for i in range(2022):
-    c.droprock(next(getrock))
+    c.droprock(next(getrock)[0])
   return c.highrock
 
 
@@ -155,14 +155,14 @@ def rockgen():
        (1, 1)),
   )
   while True:
-    for rock in rocks:
-      yield rock
+    for i, rock in enumerate(rocks):
+      yield rock, i
 
 
 def jetgen(jpattern):
   while True:
-    for j in jpattern:
-      yield j
+    for i, j in enumerate(jpattern):
+      yield j, i
 
 
 def slurp(fname):
