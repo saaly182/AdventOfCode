@@ -2,18 +2,29 @@
 
 debug = False
 
+
 class Chamber():
   # 0=space, 1=falling rock, 2=fixed rock, 3=wall/floor
-  def __init__(self, getjet):
+  def __init__(self, getjet, getrock, lookback=None):
     self.getjet = getjet
+    self.getrock = getrock
     self.width = 7
     self.cmap = [[3] * (self.width + 2)]  # start with just the floor
     self.empty_row = [3] + [0] * self.width + [3]
     self.highrock = 0
 
+    # part 2 cycle bits
+    self.lookback = lookback
+    self.rocktype = None
+    self.jetidx = None
+    self.seen = {}
+    self.cycle_found = False
+    self.rockcount = 0
+
+    # rock bits
     self.rock = None
     self.rockrow = None  # index of the rock's lowest row
-    self.rockheight = 0
+    self.rockheight = None
 
   def show(self, msg=None, always_show=False):
     if not debug and not always_show:
@@ -41,10 +52,13 @@ class Chamber():
     for x in reversed(self.rock):
       row = [3, 0, 0] + list(x) + [0] * (self.width - len(x) - 2) + [3]
       self.cmap.append(row)
+    self.rockcount += 1
 
   def pushrock(self):
     "Push the rock left or right, if possible."
-    jetdir = next(self.getjet)[0]
+    jetinfo = next(self.getjet)
+    jetdir = jetinfo[0]
+    self.jetidx = jetinfo[1]
     self.show(f'pushrock in, pushing {jetdir}')
     assert jetdir in ('<', '>')
     incr = 1
@@ -96,12 +110,61 @@ class Chamber():
     self.show('falling out')
     return True
 
-  def droprock(self, rock):
-    self.rock = rock
-    self.rockheight = len(rock)
+  def detect_cycles(self):
+    'Update class state once a cycle is found.'
+    if self.cycle_found:
+      return
 
+    if len(self.cmap) < self.lookback:
+      return
+
+    k = (
+        self.rocktype,
+        self.jetidx,
+        tuple(tuple(row) for row in self.cmap[-self.lookback:])
+    )
+    if k not in self.seen:
+      self.seen[k] = (self.highrock, self.rockcount)
+    else:
+      self.cycle_found = True
+      highrock2 = self.highrock
+      rockcount2 = self.rockcount
+      highrock1, rockcount1 = self.seen[k]
+      # per-cycle increments
+      hradd = highrock2 - highrock1
+      rcadd = rockcount2 - rockcount1
+      # now use cycles to increase height and rocks dropped
+      rocksleft = self.num - self.rockcount
+      cycles_needed = rocksleft // rcadd
+      self.highrock_cycles = hradd * cycles_needed
+      self.rockcount_cycles = rcadd * cycles_needed
+      # account for rocks dropped in the cycles
+      self.rockcount += self.rockcount_cycles
+
+  def droprocks(self, num):
+    self.num = num
+    while self.rockcount < self.num:
+      self.droprock(next(self.getrock))
+
+    # ugly hack: patch up highrock after dropping all the rocks if
+    # we used a cycle.
+    if self.cycle_found:
+      self.highrock += self.highrock_cycles
+
+  def droprock(self, rockinfo):
+    self.rock = rockinfo[0]
+    self.rocktype = rockinfo[1]
+    self.rockheight = len(self.rock)
+
+    # setup the next rock to fall
     self.addbuffer()
     self.addrock()
+
+    # watch for cycles
+    if self.lookback and not self.cycle_found:
+      self.detect_cycles()
+
+    # now let this rock move and fall
     while True:
       self.pushrock()
       if not self.fallrock():
@@ -120,18 +183,21 @@ class Chamber():
     if rocktop > self.highrock:
       self.highrock = rocktop
 
+# end class Chamber
+
 
 def part1(jet_pattern):
-  getjet = jetgen(jet_pattern)
-  getrock = rockgen()
-  c = Chamber(getjet)
-  for i in range(2022):
-    c.droprock(next(getrock)[0])
+  c = Chamber(jetgen(jet_pattern), rockgen())
+  c.droprocks(2022)
   return c.highrock
 
 
-def part2():
-  return None
+def part2(jet_pattern):
+  c = Chamber(jetgen(jet_pattern), rockgen(), 100)  # use a lookback
+  trillion = 1_000_000_000_000
+  c.droprocks(trillion)
+  assert c.highrock == 1514285714288 or c.highrock == 1560932944615
+  return c.highrock
 
 
 def rockgen():
@@ -178,7 +244,7 @@ def main():
     assert len(inp) == 1
     jet_pattern = inp[0]
     print("Part 1 answer =", part1(jet_pattern))
-    print("Part 2 answer =", part2())
+    print("Part 2 answer =", part2(jet_pattern))
     print()
 
 
