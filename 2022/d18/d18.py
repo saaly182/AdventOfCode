@@ -1,22 +1,10 @@
 #!/usr/bin/python3 -u
 
-def part1(cubes):
-  # cd is the cubes dict. The key is the cube coords, and the value is a list
-  # of the six cube faces where True means the face is exposed and False means
-  # the face is covered.
-  #
-  # face 0: front facing
-  # face 1: right facing
-  # face 2: back facing
-  # face 3: left facing
-  # face 4: top facing
-  # face 5: bottom facing
-  cd = {}
-  for cube in cubes:
-    cd[cube] = [True] * 6
-
-  # offsets for neighbor checking
+def make_graph(cubes):
+  'Return an adjacency graph of the input cubes.'
+  # neighbor offsets
   offsets = (
+  #  dx, dy, dz
     ( 0,  0,  1),  # front facing
     ( 1,  0,  0),  # right facing
     ( 0,  0, -1),  # back facing
@@ -25,20 +13,26 @@ def part1(cubes):
     ( 0, -1,  0),  # bottom facing
   )
 
-  for cube in cd:
+  cset = set(cubes)
+  cube_graph = {}
+  for cube in cubes:
+    cube_graph[cube] = set()
     x1, y1, z1 = cube
-    exposed = cd[cube]
+    for face in range(6):
+      neighbor = (x1 + offsets[face][0],
+                  y1 + offsets[face][1],
+                  z1 + offsets[face][2])
+      if neighbor in cset:
+        cube_graph[cube].add(neighbor)
 
-    for f in range(6):
-      neighbor = (x1 + offsets[f][0],
-                  y1 + offsets[f][1],
-                  z1 + offsets[f][2])
-      if neighbor in cd:
-        exposed[f] = False
+  return cube_graph
 
+
+def part1(cubes):
+  cg = make_graph(cubes)
   surf_area = 0
-  for cube in cd:
-    surf_area += sum([x for x in cd[cube] if x])
+  for cube in cg:
+    surf_area += (6 - len(cg[cube]))
     
   return surf_area
 
