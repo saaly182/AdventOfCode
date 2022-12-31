@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -u
 
-from collections import namedtuple
 import re
 
 
@@ -61,20 +60,20 @@ def dfs_explore(bp, state1, tracker):
   # get rid of the repetition.
   tracker.nodes_visited += 1
 
-  if state1.ttl == 0:
+  if state1.ttl == 1:
+    state1.produce_resources()  # one last production run
     score = state1.geo
     if score > tracker.best_score:
       tracker.best_score = score
-      #print('NEW BEST', score, tracker.nodes_visited, '\n', state1)
     return
 
   # build orebot next
   if state1.orebots < bp.orebot_max:
     state2 = state1.dup()
-    while state2.ore < bp.orebot_ore_cost and state2.ttl > 0:
+    while state2.ore < bp.orebot_ore_cost and state2.ttl > 1:
       state2.produce_resources()
       state2.ttl -= 1
-    if state2.ttl > 0:
+    if state2.ttl > 1:
       state2.ore -= bp.orebot_ore_cost
       state2.produce_resources()
       state2.orebots += 1
@@ -84,10 +83,10 @@ def dfs_explore(bp, state1, tracker):
   # build clabot next
   if state1.clabots < bp.clabot_max:
     state2 = state1.dup()
-    while state2.ore < bp.clabot_ore_cost and state2.ttl > 0:
+    while state2.ore < bp.clabot_ore_cost and state2.ttl > 1:
       state2.produce_resources()
       state2.ttl -= 1
-    if state2.ttl > 0:
+    if state2.ttl > 1:
       state2.ore -= bp.clabot_ore_cost
       state2.produce_resources()
       state2.clabots += 1
@@ -98,10 +97,10 @@ def dfs_explore(bp, state1, tracker):
   if state1.obsbots < bp.obsbot_max:
     state2 = state1.dup()
     while ((state2.ore < bp.obsbot_ore_cost or state2.cla < bp.obsbot_cla_cost)
-           and state2.ttl > 0):
+           and state2.ttl > 1):
       state2.produce_resources()
       state2.ttl -= 1
-    if state2.ttl > 0:
+    if state2.ttl > 1:
       state2.ore -= bp.obsbot_ore_cost
       state2.cla -= bp.obsbot_cla_cost
       state2.produce_resources()
@@ -112,10 +111,10 @@ def dfs_explore(bp, state1, tracker):
   # build geobot next
   state2 = state1.dup()
   while ((state2.ore < bp.geobot_ore_cost or state2.obs < bp.geobot_obs_cost)
-         and state2.ttl > 0):
+         and state2.ttl > 1):
     state2.produce_resources()
     state2.ttl -= 1
-  if state2.ttl > 0:
+  if state2.ttl > 1:
     state2.ore -= bp.geobot_ore_cost
     state2.obs -= bp.geobot_obs_cost
     state2.produce_resources()
@@ -138,7 +137,16 @@ def part1(blueprints):
 
 
 def part2(blueprints):
-  return None
+  ttl = 32
+  answer = 1
+
+  for bp in blueprints[:3]:
+    init_state = State(ttl, 1, *([0] * 7))
+    tracker = SearchTracker()
+    dfs_explore(bp, init_state, tracker)
+    answer *= tracker.best_score
+
+  return answer
 
 
 def slurp(fname):
