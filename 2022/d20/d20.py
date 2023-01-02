@@ -4,11 +4,12 @@ import copy
 
 
 class GroveMessage:
-  def __init__(self, init_msg):
-    self.init_msg = init_msg.copy()
-    self.mlen = len(init_msg)
+  def __init__(self, init_msg, decrypt_key, rounds):
+    self.init_msg = [x * decrypt_key for x in init_msg]
+    self.rounds = rounds
+    self.mlen = len(self.init_msg)
     # need unique id for each elem because init_msg elems are not unique
-    self.msg_elems = list(enumerate(init_msg))
+    self.msg_elems = list(enumerate(self.init_msg))
     self.msg = self.msg_elems.copy()
     self._mix()
 
@@ -43,20 +44,22 @@ class GroveMessage:
     return (idx + value) % (self.mlen - 1)
 
   def _mix(self):
-    for eid, value in self.msg_elems:
-      idx = self._eid_index(eid)
-      del self.msg[idx]
-      ins_idx = self._insert_idx(idx, value)
-      self.msg[ins_idx:ins_idx] = [(eid, value)]
+    for round in range(self.rounds):
+      for eid, value in self.msg_elems:
+        idx = self._eid_index(eid)
+        del self.msg[idx]
+        ins_idx = self._insert_idx(idx, value)
+        self.msg[ins_idx:ins_idx] = [(eid, value)]
 
 
 def part1(encrypted_msg):
-  grovemsg = GroveMessage(encrypted_msg)
+  grovemsg = GroveMessage(encrypted_msg, 1, 1)
   return sum(grovemsg.vals_from_zero([1000, 2000, 3000]))
 
 
-def part2():
-  return None
+def part2(encrypted_msg):
+  grovemsg = GroveMessage(encrypted_msg, 811589153, 10)
+  return sum(grovemsg.vals_from_zero([1000, 2000, 3000]))
 
 
 def slurp(fname):
@@ -71,7 +74,7 @@ def main():
   for inp in (sample_input, main_input):
     encrypted_msg = [int(x) for x in inp]
     print("Part 1 answer =", part1(encrypted_msg))
-    print("Part 2 answer =", part2())
+    print("Part 2 answer =", part2(encrypted_msg))
     print()
 
 
