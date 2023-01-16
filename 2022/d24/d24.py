@@ -3,6 +3,7 @@
 import functools
 import math
 
+
 class Valley:
     # class vars
     drdc = {'<': (0, -1), '>': (0, 1), '^': (-1, 0), 'v': (1, 0)}
@@ -13,8 +14,15 @@ class Valley:
         self.start = (0, inp[0].index('.'))
         self.end = (self.maxrow, inp[-1].index('.'))
         self.blizzards = self._gen_blizzards(inp)
+        self._tstart = 0
         self._visited_states = set()
         self._lcm = math.lcm(self.maxrow - 1, self.maxcol - 1)  # least common multiple of row & col data sizes
+
+    def go_back(self, t):
+        """Reverse the start/end points in preparation for another bfs search."""
+        self.start, self.end = self.end, self.start
+        self._visited_states.clear()
+        self._tstart = t
 
     @staticmethod
     def _gen_blizzards(inp):
@@ -58,14 +66,12 @@ class Valley:
 
     def bfs(self):
         """Search for self.end and return the time it took."""
-        check_count = 0
-        bq = [(self.start, 0)]  # bfs queue; elements are (expedition location, time)
+        bq = [(self.start, self._tstart)]  # bfs queue; elements are (expedition location, time)
         while bq:
-            check_count += 1
             eloc, t1 = bq.pop(0)
             er, ec = eloc
             if eloc == self.end:
-                return t1
+                return t1 - self._tstart
             t2 = t1 + 1
             bcells = self._blizlocs(t2)
             for d in list(Valley.drdc.values()) + [(0, 0)]:
@@ -84,8 +90,14 @@ def part1(inp):
     return valley.bfs()
 
 
-def part2():
-    return None
+def part2(inp):
+    valley = Valley(inp)
+    t1 = valley.bfs()
+    valley.go_back(t1)
+    t2 = valley.bfs()
+    valley.go_back(t1 + t2)
+    t3 = valley.bfs()
+    return t1 + t2 + t3
 
 
 def slurp(fname):
@@ -99,7 +111,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
