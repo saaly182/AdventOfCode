@@ -45,13 +45,8 @@ def decimal2snafu(dec):
                 pv = pv_next
                 dec = dec_next
                 break
-        assert pv == pv_next  # it's required that one of the digits worked
-
-    # now dec contains the remaining one's value
-    # sna.append(dec)
 
     snaval = ''.join(['012=-'[i] for i in sna])
-
     return snaval
 
 
