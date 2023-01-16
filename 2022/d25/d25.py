@@ -21,7 +21,10 @@ def snafu2decimal(sna):
 
 
 @functools.lru_cache(maxsize=None)
-def _boundary(place_val):
+def all_twos(place_val):
+    """Return the value of the all-twos snafu num (e.g., "22222")."""
+    # This is the largest snafu number with this many digits. The next snafu
+    # number will be like "1=====".
     b = 0
     while place_val > 0:
         b += 2 * place_val
@@ -32,7 +35,7 @@ def _boundary(place_val):
 def decimal2snafu(dec):
     sna = []
     place_val = 1
-    while dec > _boundary(place_val):
+    while dec > all_twos(place_val):
         place_val *= 5
     pv = place_val
 
@@ -40,7 +43,7 @@ def decimal2snafu(dec):
         pv_next = pv // 5
         for digit in range(-2, 3):
             dec_next = dec - digit * pv
-            if abs(dec_next) <= _boundary(pv_next):
+            if abs(dec_next) <= all_twos(pv_next):
                 sna.append(digit)
                 pv = pv_next
                 dec = dec_next
