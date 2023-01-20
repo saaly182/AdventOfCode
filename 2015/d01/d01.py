@@ -22,7 +22,7 @@ def slurp(fname):
 
 
 def main():
-    main_input = slurp('input.txt')
+    main_input = slurp('input/input.txt')
 
     for inp in (main_input,):
         print("Part 1 answer =", part1(inp))

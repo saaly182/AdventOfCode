@@ -25,8 +25,8 @@ def slurp(fname):
 
 
 def main():
-    sample_input = slurp('sample_input.txt')
-    main_input = slurp('input.txt')
+    sample_input = slurp('input/sample_input.txt')
+    main_input = slurp('input/input.txt')
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
