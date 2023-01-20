@@ -1,3 +1,3 @@
 # AdventOfCode
 
-My crappy code for https://adventofcode.com/
+My code for https://adventofcode.com/
