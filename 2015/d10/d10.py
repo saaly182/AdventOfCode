@@ -30,13 +30,7 @@ def part2(num, rotations):
     return part1(num, rotations)
 
 
-def slurp(fname):
-    with open(fname) as file:
-        return [line.rstrip() for line in file.readlines()]
-
-
 def main():
-    assert look_and_say('111221') == '312211'
     print("Part 1 answer =", part1('3113322113', 40))
     print("Part 2 answer =", part2('3113322113', 50))
     print()
