@@ -26,6 +26,16 @@ def charcount(s):
     return len(x)
 
 
+def encode(s):
+    e = ['"']
+    for c in s:
+        if c == '"' or c == '\\':
+            e.append('\\')
+        e.append(c)
+    e.append('"')
+    return ''.join(e)
+
+
 def part1(inp):
     literals_len = 0
     memory_len = 0
@@ -37,8 +47,14 @@ def part1(inp):
     return literals_len - memory_len
 
 
-def part2():
-    return None
+def part2(inp):
+    literals_len = 0
+    encoded_len = 0
+
+    for line in inp:
+        literals_len += len(line)
+        encoded_len += len(encode(line))
+    return encoded_len - literals_len
 
 
 def slurp(fname):
@@ -52,7 +68,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
