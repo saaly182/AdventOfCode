@@ -1,7 +1,10 @@
 #!/usr/bin/python3 -u
 
+import copy
+
+
 def evaluate(item, connection):
-    # seems I didn't need to account for input being 16-bit
+    # NOTE: changes the "connection" dict while processing
     if isinstance(item, int):
         return item
 
@@ -44,8 +47,10 @@ def part1(connection):
     return evaluate('a', connection)
 
 
-def part2():
-    return None
+def part2(connection):
+    a = evaluate('a', copy.deepcopy(connection))
+    connection['b'] = a
+    return evaluate('a', connection)
 
 
 def slurp(fname):
@@ -81,7 +86,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(parse(inp)))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(parse(inp)))
         print()
 
 
