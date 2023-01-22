@@ -1,13 +1,9 @@
 #!/usr/bin/python3 -u
 
 def charcount(s):
-    x = list(s)
+    x = list(s[1:-1])  # ignore the enclosing double quotes
 
-    # first get rid of the enclosing double quotes
-    x.pop()
-    x.pop(0)
-
-    # now un-escape backslashes until no more escapes exist
+    # un-escape backslashes until no more escapes exist
     try:
         while True:
             bi0 = x.index('\\')
