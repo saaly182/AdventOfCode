@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import json
 import re
 
 
@@ -9,8 +10,33 @@ def part1(inp):
     return all_num_sum
 
 
-def part2():
-    return None
+def clear_red(x):
+    """Recursively examine all elements and clear any dict with a value 'red'"""
+    tx = type(x)
+
+    if tx not in (int, str, list, dict):
+        raise ValueError(x)
+
+    if tx in (int, str):
+        return
+
+    if tx == list:
+        for y in x:
+            clear_red(y)
+        return
+
+    # dict handling
+    if 'red' in x.values():
+        x.clear()
+    for y in x:
+        clear_red(x[y])
+
+
+def part2(inp):
+    jdata = json.loads(inp[0])
+    clear_red(jdata)
+    all_num_sum = sum([int(x) for x in re.findall(r'-?\d+', str(jdata))])
+    return all_num_sum
 
 
 def slurp(fname):
@@ -24,7 +50,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
