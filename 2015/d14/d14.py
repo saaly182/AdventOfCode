@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import collections
 import typing
 
 
@@ -8,20 +9,34 @@ class Reindeer(typing.NamedTuple):
     speed: int
     runtime: int
     resttime: int
+    cycletime: int
 
 
 def part1(rdata, racetime):
     maxdist = 0
     for r in rdata:
-        cycletime = r.runtime + r.resttime
-        cycles, timeleft = divmod(racetime, cycletime)
+        cycles, timeleft = divmod(racetime, r.cycletime)
         dist = r.speed * cycles * r.runtime + r.speed * min(r.runtime, timeleft)
         maxdist = max(maxdist, dist)
     return maxdist
 
 
-def part2():
-    return None
+def part2(rdata, racetime):
+    dist = collections.defaultdict(int)
+    points = collections.defaultdict(int)
+
+    for t in range(0, racetime):
+        for r in rdata:
+            tc = t % r.cycletime
+            if tc < r.runtime:
+                dist[r.name] += r.speed * 1
+
+        maxdist = max(dist.values())
+        for r in rdata:
+            if dist[r.name] == maxdist:
+                points[r.name] += 1
+
+    return max(points.values())
 
 
 def slurp(fname):
@@ -33,7 +48,12 @@ def parse(inp):
     rdata = []
     for line in inp:
         a = line.split()
-        rdata.append(Reindeer(a[0], int(a[3]), int(a[6]), int(a[13])))
+        name = a[0]
+        speed = int(a[3])
+        runtime = int(a[6])
+        resttime = int(a[13])
+        cycletime = runtime + resttime
+        rdata.append(Reindeer(name, speed, runtime, resttime, cycletime))
     return tuple(rdata)
 
 
@@ -44,7 +64,7 @@ def main():
     for inp in (sample_input, main_input):
         rdata = parse(inp)
         print("Part 1 answer =", part1(rdata, 2503))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(rdata, 2503))
         print()
 
 
