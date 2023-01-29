@@ -43,9 +43,9 @@ class Grid:
         for i in range(steps):
             g1 = self.g
             g2 = []
-            for r in range(len(g1)):
+            for r in range(self.rowmax + 1):
                 row = []
-                for c in range(len(g1[0])):
+                for c in range(self.colmax + 1):
                     noc = self._neighbor_on_count(g1, r, c)
                     if g1[r][c] == '#':
                         if noc == 2 or noc == 3:
