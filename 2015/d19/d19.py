@@ -5,22 +5,50 @@ import re
 
 
 def atomize(molecule):
+    if molecule == 'e':
+        return 'e',
     return tuple(re.findall(r'[A-Z][a-z]?', molecule))
 
 
 def part1(replacements, molecule):
-    new_molecules = set()
-    atoms = atomize(molecule)
+    return len(list(fabricate(replacements, molecule)))
+
+
+def fabricate(replacements, m):
+    """Yield all the distinct molecules than can be fabricated from m."""
+    seen_molecules = set()
+    atoms = atomize(m)
     for i, atom in enumerate(atoms):
-        nm = list(atoms)
+        nmas = list(atoms)  # new molecule atoms
         for new_atom in replacements[atom]:
-            nm[i] = new_atom
-            new_molecules.add(''.join(nm))
-    return len(new_molecules)
+            nmas[i] = new_atom
+            nm = ''.join(nmas)
+            if nm not in seen_molecules:
+                seen_molecules.add(nm)
+                yield nm
 
 
-def part2():
-    return None
+def bfs(replacements, molecule):
+    """Return the number of steps to go from e to molecule."""
+    seen_molecules = {'e'}
+    q = [('e', 0)]
+    curstep = 0
+    while q:
+        m, step = q.pop(0)
+        if step > curstep:
+            print(f'{step=} {len(q)=} {m=}')
+            curstep = step
+        if m == molecule:
+            return step
+        for next_m in fabricate(replacements, m):
+            if next_m not in seen_molecules:
+                seen_molecules.add(next_m)
+                q.append((next_m, step + 1))
+    assert False  # should never get here
+
+
+def part2(replacements, molecule):
+    return bfs(replacements, molecule)
 
 
 def slurp(fname):
@@ -48,7 +76,7 @@ def main():
     for inp in (sample_input, main_input):
         replacements, molecule = parse(inp)
         print("Part 1 answer =", part1(replacements, molecule))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(replacements, molecule))
         print()
 
 
