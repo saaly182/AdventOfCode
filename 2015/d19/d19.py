@@ -28,27 +28,34 @@ def fabricate(replacements, m):
                 yield nm
 
 
-def bfs(replacements, molecule):
-    """Return the number of steps to go from e to molecule."""
-    seen_molecules = {'e'}
-    q = [('e', 0)]
-    curstep = 0
-    while q:
-        m, step = q.pop(0)
-        if step > curstep:
-            print(f'{step=} {len(q)=} {m=}')
-            curstep = step
-        if m == molecule:
-            return step
-        for next_m in fabricate(replacements, m):
-            if next_m not in seen_molecules:
-                seen_molecules.add(next_m)
-                q.append((next_m, step + 1))
-    assert False  # should never get here
+def greedy_reduce(replacements, molecule):
+    # I initially tried BFS for this, but suspected it would blow up given
+    # the branching factor shown from part 1. Eventually had to read some
+    # reddit posts to get hints. Learned that the input is actually crafted
+    # to only have one possible "fabrication" from 'e'. Looks like the
+    # general problem would require complex enough algorithms that I'm not
+    # willing to dig into right now. Some folks mentioned the CYK algorithm.
+    # Anyway, I'm just going with a greedy reduction from molecule->e.
+    steps = 0
+    reductions = {}
+    for atom, ms in replacements.items():
+        for m in ms:
+            assert m not in reductions  # for this input, no overlaps
+            reductions[m] = atom
+    # now just repeatedly make the largest reduction until we get to 'e'
+    target = molecule
+    ms = sorted(reductions, key=len, reverse=True)
+    while target != 'e':
+        for m in ms:
+            if target.find(m) != -1:
+                target = target.replace(m, reductions[m], 1)
+                steps += 1
+                break
+    return steps
 
 
 def part2(replacements, molecule):
-    return bfs(replacements, molecule)
+    return greedy_reduce(replacements, molecule)
 
 
 def slurp(fname):
