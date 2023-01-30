@@ -66,10 +66,11 @@ def who_wins(p1, p2):
         return p2_wins
 
 
-def part1(boss):
+def part1(boss, objective='win'):
     player_hitpoints = 100
     empty_item = Equipment('nothing', 0, 0, 0)
     cost_min = float('inf')
+    cost_max = float('-inf')
 
     for weapon in shop['weapons']:
         for armor in (empty_item,) + shop['armor']:
@@ -81,14 +82,21 @@ def part1(boss):
                     a = armor.armor + ring1.armor + ring2.armor
                     cost = weapon.cost + armor.cost + ring1.cost + ring2.cost
                     player = Character(player_hitpoints, d, a)
+
+                    # track optimal cost for player
                     if who_wins(player, boss) == 1:
                         if cost < cost_min:
                             cost_min = cost
-    return cost_min
+                    # track optimal cost for shopkeeper+boss
+                    else:
+                        if cost > cost_max:
+                            cost_max = cost
+
+    return cost_min if objective == 'win' else cost_max
 
 
-def part2():
-    return None
+def part2(boss):
+    return part1(boss, objective='lose')
 
 
 def slurp(fname):
@@ -99,7 +107,7 @@ def slurp(fname):
 def main():
     boss = Character(104, 8, 1)
     print("Part 1 answer =", part1(boss))
-    print("Part 2 answer =", part2())
+    print("Part 2 answer =", part2(boss))
     print()
 
 
