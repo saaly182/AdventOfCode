@@ -10,10 +10,10 @@ def decode(mem):
     return inst, op1, op2
 
 
-def part1(program):
+def part1(program, ra=0, rb=0):
     pc = 0
     pc_max = len(program) - 1
-    r = {'a': 0, 'b': 0}
+    r = {'a': ra, 'b': rb}
 
     while 0 <= pc <= pc_max:
         inst, op1, op2 = decode(program[pc])
@@ -43,8 +43,8 @@ def part1(program):
     return r['b']
 
 
-def part2():
-    return None
+def part2(program, ra=0, rb=0):
+    return part1(program, ra, rb)
 
 
 def slurp(fname):
@@ -73,7 +73,7 @@ def main():
     for inp in (sample_input, main_input):
         program = parse(inp)
         print("Part 1 answer =", part1(program))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(program, ra=1))
         print()
 
 
