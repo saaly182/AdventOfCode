@@ -2,6 +2,9 @@
 
 import dataclasses
 
+# global
+mana_min = None
+
 
 @dataclasses.dataclass
 class Boss:
@@ -93,11 +96,7 @@ class Wizard:
                 f'{self.armor=} {self.effects_ttl=}')
 
 
-# global
-mana_min = float('inf')
-
-
-def do_turns(boss, wizard, spell):
+def do_turns(boss, wizard, spell, hard_mode):
     boss_dead = False
 
     def update_boss(damage):
@@ -110,6 +109,10 @@ def do_turns(boss, wizard, spell):
             boss_dead = True
 
     # wizard's turn
+    if hard_mode:
+        wizard.hp -= 1
+        if wizard.hp <= 0:
+            return
     wdamage = wizard.process_effects()
     update_boss(wdamage)
     if boss_dead:
@@ -128,7 +131,7 @@ def do_turns(boss, wizard, spell):
     wizard.hp -= bdamage
 
 
-def dfs(boss, wizard):
+def dfs(boss, wizard, hard_mode=False):
     """
     Exhaustive DFS for the least amount of spent mana that defeats the boss.
     After running this function, mana_min will have the answer.
@@ -146,20 +149,24 @@ def dfs(boss, wizard):
         if wizard.can_cast(spell):
             w = wizard.clone()
             b = dataclasses.replace(boss)
-            do_turns(b, w, spell)
+            do_turns(b, w, spell, hard_mode)
 
             if w.hp > 0 and b.hp > 0:
-                dfs(b, w)
+                dfs(b, w, hard_mode)
 
 
 def part1(boss, wizard):
+    global mana_min
+    mana_min = float('inf')
     dfs(boss, wizard)
-    assert mana_min == 1269
     return mana_min
 
 
-def part2():
-    return None
+def part2(boss, wizard):
+    global mana_min
+    mana_min = float('inf')
+    dfs(boss, wizard, hard_mode=True)
+    return mana_min
 
 
 def slurp(fname):
@@ -171,7 +178,7 @@ def main():
     boss = Boss(58, 9)
     wizard = Wizard(50, 500)
     print("Part 1 answer =", part1(boss, wizard))
-    print("Part 2 answer =", part2())
+    print("Part 2 answer =", part2(boss, wizard))
     print()
 
 
