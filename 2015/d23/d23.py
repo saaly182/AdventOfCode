@@ -3,10 +3,7 @@
 def decode(mem):
     inst = mem[0]
     op1 = mem[1]
-    if len(mem) == 3:
-        op2 = mem[2]
-    else:
-        op2 = None
+    op2 = mem[2] if len(mem) == 3 else None
     return inst, op1, op2
 
 
