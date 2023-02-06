@@ -54,8 +54,6 @@ def part1(weights):
             # remaining weights.
             weights_left = tuple_subtract(weights, g1)
             wlsum = sum(weights_left)
-            if wlsum % 2 != 0:
-                continue
             if can_partition(weights_left, len(weights_left), wlsum // 2):
                 qe.append(math.prod(g1))
 
@@ -79,16 +77,12 @@ def part2(weights):
         for g1 in weight_groups(weights, g1size, gw):
             weights_left1 = tuple_subtract(weights, g1)
             wlsum1 = sum(weights_left1)
-            if wlsum1 % 3 != 0:
-                continue
             for g2size in range(1, len(weights_left1) - 1):
                 for g2 in weight_groups(weights_left1, g2size, gw):
                     # Now we're down to the classic Partition Problem with the
                     # remaining weights.
                     weights_left2 = tuple_subtract(weights_left1, g2)
                     wlsum2 = sum(weights_left2)
-                    if wlsum2 % 2 != 0:
-                        continue
                     if can_partition(weights_left2, len(weights_left2),
                                      wlsum2 // 2):
                         qe.append(math.prod(g1))
