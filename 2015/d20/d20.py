@@ -36,11 +36,6 @@ def part2(pcount):
     return house_number
 
 
-def slurp(fname):
-    with open(fname) as file:
-        return [line.rstrip() for line in file.readlines()]
-
-
 def main():
     pcount = 29_000_000
     print("Part 1 answer =", part1(pcount))

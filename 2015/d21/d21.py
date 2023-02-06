@@ -99,11 +99,6 @@ def part2(boss):
     return part1(boss, objective='lose')
 
 
-def slurp(fname):
-    with open(fname) as file:
-        return [line.rstrip() for line in file.readlines()]
-
-
 def main():
     boss = Character(104, 8, 1)
     print("Part 1 answer =", part1(boss))

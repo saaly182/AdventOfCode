@@ -169,11 +169,6 @@ def part2(boss, wizard):
     return mana_min
 
 
-def slurp(fname):
-    with open(fname) as file:
-        return [line.rstrip() for line in file.readlines()]
-
-
 def main():
     boss = Boss(58, 9)
     wizard = Wizard(50, 500)
