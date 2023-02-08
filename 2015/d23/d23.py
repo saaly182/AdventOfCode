@@ -14,28 +14,23 @@ def part1(program, ra=0, rb=0):
 
     while 0 <= pc <= pc_max:
         inst, op1, op2 = decode(program[pc])
+        pc_change = 1
         match inst:
             case 'hlf':
                 r[op1] //= 2
-                pc += 1
             case 'tpl':
                 r[op1] *= 3
-                pc += 1
             case 'inc':
                 r[op1] += 1
-                pc += 1
             case 'jmp':
-                pc += op1
+                pc_change = op1
             case 'jie':
                 if r[op1] % 2 == 0:
-                    pc += op2
-                else:
-                    pc += 1
+                    pc_change = op2
             case 'jio':
                 if r[op1] == 1:
-                    pc += op2
-                else:
-                    pc += 1
+                    pc_change = op2
+        pc += pc_change
 
     return r['b']
 
