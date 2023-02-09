@@ -1,5 +1,10 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+
+import dirutils
+
 keypad_part1 = ['00000',
                 '01230',
                 '04560',
@@ -16,14 +21,12 @@ keypad_part2 = ['0000000',
 
 
 def part1(inp, keypad, r, c):
-    vec = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
-
     code = []
 
     for seq in inp:
         for letter in seq:
-            rn = r + vec[letter][0]
-            cn = c + vec[letter][1]
+            rn = r + dirutils.dirvecs[letter][0]
+            cn = c + dirutils.dirvecs[letter][1]
             if keypad[rn][cn] == '0':
                 continue  # ignore if this would take us off the keypad
             r, c = rn, cn

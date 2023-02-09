@@ -1,27 +1,21 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+
 import collections
+import dirutils
 
 
 class Grid:
   """A grid of elves.
   """
   # class vars
-  neighbor_spots = (
-      (-1, 0), (-1, 1), (0, 1), (1, 1),
-      (1, 0), (1, -1), (0, -1), (-1, -1))
-
   adj_spots = {
       'N': ((-1, -1), (-1, 0), (-1, 1)),
       'S': ((1, -1), (1, 0), (1, 1)),
       'W': ((-1, -1), (0, -1), (1, -1)),
       'E': ((-1, 1), (0, 1), (1, 1))}
-
-  d_move = {
-      'N': (-1,  0),
-      'S': ( 1,  0),
-      'W': ( 0, -1),
-      'E': ( 0,  1)}
 
   def __init__(self, inp):
     self.dorder = list('NSWE')
@@ -76,7 +70,8 @@ class Grid:
                 can_move = False
                 break
             if can_move:
-              desired_spot = (r + Grid.d_move[d][0], c + Grid.d_move[d][1])
+              desired_spot = (r + dirutils.dirvecs[d][0],
+                              c + dirutils.dirvecs[d][1])
               proposals[desired_spot].append(elf)
               break
           if not can_move:  # never found a possible direction
@@ -105,7 +100,7 @@ class Grid:
   def no_neighbors(self, elf):
     'Return True if elf has no neighbors.'
     r, c = elf
-    for ns in Grid.neighbor_spots:
+    for ns in dirutils.neighbors:
       if (r + ns[0], c + ns[1]) in self.elves:
         return False
     return True

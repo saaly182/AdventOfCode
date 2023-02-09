@@ -1,8 +1,10 @@
 #!/usr/bin/python3 -u
 
-import collections
+import sys
+sys.path.append('../../lib')
 
-move_incr = {'<': (-1, 0), '>': (1, 0), '^': (0, 1), 'v': (0, -1)}
+import collections
+import dirutils
 
 
 def part1(moves):
@@ -10,9 +12,9 @@ def part1(moves):
     house2presents = collections.defaultdict(int)
     house2presents[pos] = 1
     for m in moves:
-        if m not in move_incr:
+        if m not in dirutils.dirvecs:
             raise ValueError(m)
-        dx, dy = move_incr[m]
+        dx, dy = dirutils.dirvecs[m]
         pos = pos[0] + dx, pos[1] + dy
         house2presents[pos] += 1
     return len(house2presents)
@@ -24,9 +26,9 @@ def part2(moves):
     for offset in (0, 1):
         pos = (0, 0)
         for m in moves[offset::2]:
-            if m not in move_incr:
+            if m not in dirutils.dirvecs:
                 raise ValueError(m)
-            dx, dy = move_incr[m]
+            dx, dy = dirutils.dirvecs[m]
             pos = pos[0] + dx, pos[1] + dy
             house2presents[pos] += 1
     return len(house2presents)

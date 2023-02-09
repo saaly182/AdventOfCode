@@ -1,5 +1,11 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+
+import dirutils
+
+
 def block_range(a, b):
     """Return a range from the block-past-a to b."""
     if a <= b:
@@ -12,7 +18,6 @@ def block_range(a, b):
 def walk(moves, revisit_mode=False):
     nd = {'NR': 'E', 'NL': 'W', 'SR': 'W', 'SL': 'E',
           'ER': 'S', 'EL': 'N', 'WR': 'N', 'WL': 'S'}
-    ve = {'N': (0, 1), 'S': (0, -1), 'E': (1, 0), 'W': (-1, 0)}
     seen = {}
 
     x1, y1, d = 0, 0, 'N'
@@ -23,8 +28,8 @@ def walk(moves, revisit_mode=False):
             break
 
         d = nd[d + move[0]]
-        x2 = x1 + ve[d][0] * move[1]
-        y2 = y1 + ve[d][1] * move[1]
+        x2 = x1 + dirutils.dirvecs[d][0] * move[1]
+        y2 = y1 + dirutils.dirvecs[d][1] * move[1]
 
         if revisit_mode:
             for x in block_range(x1, x2):

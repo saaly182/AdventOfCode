@@ -5,6 +5,7 @@ sys.path.append('../../lib')
 
 from collections import namedtuple
 from multiline_record import multiline_file
+import dirutils
 
 
 class Walker:
@@ -53,7 +54,7 @@ class Board:
       'L': {'N': 'W', 'S': 'E', 'E': 'N', 'W': 'S'},
       'R': {'N': 'E', 'S': 'W', 'E': 'S', 'W': 'N'},
     }
-    self.move = {'N': (-1, 0), 'S': (1, 0), 'E': (0, 1), 'W': (0, -1)}
+    self.move = dirutils.dirvecs
 
   def _mark_walker_tile(self):
     self.board[self.walker.row][self.walker.col] = self.dirsyms[self.walker.dir]

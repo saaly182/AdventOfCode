@@ -1,5 +1,11 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+
+import dirutils
+
+
 class Grid:
     def __init__(self, rows, corners_on=False):
         self.g = []
@@ -22,9 +28,7 @@ class Grid:
 
     def _neighbor_on_count(self, g, r, c):
         noc = 0
-        deltas = ((-1, 0), (-1, 1), (0, 1), (1, 1),
-                  (1, 0), (1, -1), (0, -1), (-1, -1))
-        for d in deltas:
+        for d in dirutils.neighbors:
             rn, cn = r + d[0], c + d[1]
             if rn < 0 or rn > self.rowmax or cn < 0 or cn > self.colmax:
                 continue

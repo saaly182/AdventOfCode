@@ -1,12 +1,16 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+
+import dirutils
 import functools
 import math
 
 
 class Valley:
     # class vars
-    drdc = {'<': (0, -1), '>': (0, 1), '^': (-1, 0), 'v': (1, 0)}
+    drdc = dirutils.dirvecs
 
     def __init__(self, inp):
         self.maxrow = len(inp) - 1
