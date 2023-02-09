@@ -10,7 +10,7 @@ dirvecs = {
     '^': (-1, 0), 'v': (1, 0), '>': (0, 1), '<': (0, -1),
 }
 
-# row, col neighors
+# row, col neighbors
 neighbors = (
     (-1,  0),  # n
     (-1,  1),  # ne
