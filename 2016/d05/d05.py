@@ -41,11 +41,6 @@ def part2(doorid):
     return ''.join(password)
 
 
-def slurp(fname):
-    with open(fname) as file:
-        return [line.rstrip() for line in file.readlines()]
-
-
 def main():
     print("Part 1 answer =", part1('wtnhxymk'))
     print("Part 2 answer =", part2('wtnhxymk'))
