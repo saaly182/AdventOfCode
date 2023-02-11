@@ -31,10 +31,9 @@ def checksum(s):
 def part1(inp):
     secsum = 0
     for item in inp:
-        match = re.fullmatch(spec, item)
-        if not match:
+        if not (mo := re.fullmatch(spec, item)):
             raise ValueError(item)
-        encname, sectorid, cksum = match.groups()
+        encname, sectorid, cksum = mo.groups()
         sectorid = int(sectorid)
         if checksum(encname) == cksum:
             secsum += sectorid
@@ -55,10 +54,9 @@ def decrypt(s, n):
 
 def part2(inp):
     for item in inp:
-        match = re.fullmatch(spec, item)
-        if not match:
+        if not (mo := re.fullmatch(spec, item)):
             raise ValueError(item)
-        encname, sectorid, cksum = match.groups()
+        encname, sectorid, cksum = mo.groups()
         sectorid = int(sectorid)
         if checksum(encname) == cksum:
             name = decrypt(encname, sectorid)
