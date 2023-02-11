@@ -35,12 +35,35 @@ def part1(inp):
         if not match:
             raise ValueError(item)
         encname, sectorid, cksum = match.groups()
+        sectorid = int(sectorid)
         if checksum(encname) == cksum:
-            secsum += int(sectorid)
+            secsum += sectorid
     return secsum
 
 
-def part2():
+def decrypt(s, n):
+    dec = []
+    offset = ord('a')
+    for ec in s:
+        if ec == '-':
+            dc = ' '
+        else:
+            dc = chr(((((ord(ec) - offset) + n) % 26) + offset))
+        dec.append(dc)
+    return ''.join(dec)
+
+
+def part2(inp):
+    for item in inp:
+        match = re.fullmatch(spec, item)
+        if not match:
+            raise ValueError(item)
+        encname, sectorid, cksum = match.groups()
+        sectorid = int(sectorid)
+        if checksum(encname) == cksum:
+            name = decrypt(encname, sectorid)
+            if name == 'northpole object storage':
+                return sectorid
     return None
 
 
@@ -55,7 +78,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
