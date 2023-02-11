@@ -1,6 +1,7 @@
 #!/usr/bin/python3 -u
 
 def is_triangle(a, b, c):
+    # a, b, c are side lengths
     return a + b > c and b + c > a and a + c > b
 
 
