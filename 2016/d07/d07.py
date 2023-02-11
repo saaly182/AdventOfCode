@@ -9,7 +9,7 @@ def tokenize(ip):
     while mo := re.match(spec, ip[idx:]):
         tok = mo.group(0)
         idx += len(tok)
-        yield mo.group(0)
+        yield tok
 
 
 def supports_tls(ip):
