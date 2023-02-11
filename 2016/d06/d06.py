@@ -23,7 +23,7 @@ def part1(inp, select_min=False):
         tgtfreq = tgtfnc(charcounts[col].values())
         char = [c for c in charcounts[col] if charcounts[col][c] == tgtfreq]
         if len(char) != 1:
-            raise ValueError(f"multiple chars have max freq {char}")
+            raise ValueError(f"multiple chars have the target freq {char}")
         realmsg.append(char[0])
 
     return ''.join(realmsg)
