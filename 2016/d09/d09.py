@@ -3,11 +3,33 @@
 import re
 
 
-def decompress(c, version=1):
+def decomplen(c):
+    """Return the length of the decompressed version of string c under
+    the part2 decompression rules."""
+    dlen = 0
+    idx = 0
+
+    while idx < len(c):
+        while idx < len(c):
+            if mo := re.match(r'\((\d+)x(\d+)\)', c[idx:]):
+                clen = len(mo.group(0))
+                slen = int(mo.group(1))
+                repeat = int(mo.group(2))
+                idx += clen
+                dlen += decomplen(c[idx:idx + slen]) * repeat
+                idx += slen
+            else:
+                dlen += 1
+                idx += 1
+
+    return dlen
+
+
+def decompress(c):
+    """Return the decompressed string of compressed string c under the
+    part 1 decompression rules."""
     d = []
     idx = 0
-    if version not in (1, 2):
-        raise ValueError(f'bad version number: {version}')
 
     while idx < len(c):
         if mo := re.match(r'\((\d+)x(\d+)\)', c[idx:]):
@@ -16,14 +38,8 @@ def decompress(c, version=1):
             repeat = int(mo.group(2))
             idx += clen
             s = c[idx:idx + slen]
-
-            if version == 1:
-                ds = list(s)
-            else:
-                ds = list(decompress(s, version=2))
             for _ in range(repeat):
-                d.extend(ds)
-
+                d.extend(list(s))
             idx += slen
         else:
             d.append(c[idx])
@@ -37,7 +53,7 @@ def part1(comp_msg):
 
 
 def part2(comp_msg):
-    return len(decompress(comp_msg, version=2))
+    return decomplen(comp_msg)
 
 
 def slurp(fname):
