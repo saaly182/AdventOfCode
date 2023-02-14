@@ -10,17 +10,16 @@ def decomplen(c):
     idx = 0
 
     while idx < len(c):
-        while idx < len(c):
-            if mo := re.match(r'\((\d+)x(\d+)\)', c[idx:]):
-                clen = len(mo.group(0))
-                slen = int(mo.group(1))
-                repeat = int(mo.group(2))
-                idx += clen
-                dlen += decomplen(c[idx:idx + slen]) * repeat
-                idx += slen
-            else:
-                dlen += 1
-                idx += 1
+        if mo := re.match(r'\((\d+)x(\d+)\)', c[idx:]):
+            clen = len(mo.group(0))
+            slen = int(mo.group(1))
+            repeat = int(mo.group(2))
+            idx += clen
+            dlen += decomplen(c[idx:idx + slen]) * repeat
+            idx += slen
+        else:
+            dlen += 1
+            idx += 1
 
     return dlen
 
