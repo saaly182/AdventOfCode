@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -u
 
-from collections import defaultdict
+import collections
 import math
 import heapq
 
@@ -36,8 +36,9 @@ class CubeMaze:
         is_even = count_ones % 2 == 0
         return self._open if is_even else self._wall
 
-    def neighbors(self, x, y):
+    def neighbors(self, spot):
         """Return open spaces adjacent to (x, y) and their distance."""
+        x, y = spot
         dst = 1
         n = []
         for uv in unitvecs:
@@ -54,8 +55,8 @@ class CubeMaze:
         """Return distance from src to dst using dijkstra."""
         # See more details in ../../lib/aocutils.py. Obviously this needs a
         # specialized dijkstra to account for the infinite computed graph.
-        dist = defaultdict(lambda: math.inf)
-        seen = defaultdict(bool)
+        dist = collections.defaultdict(lambda: math.inf)
+        seen = collections.defaultdict(bool)
         minq = []
         dist[src] = 0
         heapq.heappush(minq, (0, src))
@@ -68,7 +69,7 @@ class CubeMaze:
                 continue  # already seen this vertex
             seen[u] = True
 
-            for v, e in self.neighbors(u[0], u[1]):
+            for v, e in self.neighbors(u):
                 alt = dist[u] + e
                 if alt < dist[v]:
                     dist[v] = alt
@@ -76,21 +77,43 @@ class CubeMaze:
 
         return dist[dst]
 
+    def reach(self, dist):
+        """Return number of spots reachable with dist steps."""
+        # BFS
+        start = (1, 1)
+        # using deque because regular list.pop(0) is super inefficient
+        q = collections.deque()
+        q.append((0, start))
+        seen = set()
+
+        while q:
+            steps, spot = q.popleft()
+            if steps > dist:
+                continue
+            if spot in seen:
+                continue
+            seen.add(spot)
+            for n, _ in self.neighbors(spot):
+                q.append((steps + 1, n))
+
+        return len(seen)
+
 
 def part1(favnum, dst):
     cm = CubeMaze(favnum)
     return cm.shortest_path((1, 1), dst)
 
 
-def part2():
-    return None
+def part2(favnum):
+    cm = CubeMaze(favnum)
+    return cm.reach(50)
 
 
 def main():
 
     for inp in ((10, (7, 4)), (1358, (31, 39))):
         print("Part 1 answer =", part1(*inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp[0]))
         print()
 
 
