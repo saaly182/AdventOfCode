@@ -43,12 +43,12 @@ class CubeMaze:
         n = []
         for uv in unitvecs:
             nx, ny = x + uv[0], y + uv[1]
-            spot = (nx, ny)
-            if spot not in self.maze:
+            nspot = (nx, ny)
+            if nspot not in self.maze:
                 ltype = self.location_type(nx, ny)
-                self.maze[spot] = ltype
-            if self.maze[spot] == self._open:
-                n.append((spot, dst))
+                self.maze[nspot] = ltype
+            if self.maze[nspot] == self._open:
+                n.append((nspot, dst))
         return tuple(n)
 
     def shortest_path(self, src, dst):
