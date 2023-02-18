@@ -8,6 +8,7 @@ floor1; generator3 is on floor 4 and microchip3 is on floor 3. It's not
 important to know or track their element names.
 """
 
+import collections
 import itertools
 
 
@@ -55,23 +56,27 @@ def valid_pos(pos):
 
 
 def bfs(positions):
+    if not valid_pos(positions):
+      return None
+
     tgt = tuple([(4, 4)] * len(positions))
     steps = 0
     elev = 1  # elevator floor
-    q = [(steps, elev, positions)]
+    # using deque because regular list.pop(0) is super inefficient
+    q = collections.deque()
+    q.append((steps, elev, positions))
     seen = set()
 
     while q:
-        steps, elev, pos = q.pop(0)
+        steps, elev, pos = q.popleft()
         if pos == tgt:
             return steps
         if (elev, pos) in seen:
             continue
         seen.add((elev, pos))
-        if not valid_pos(pos):
-            continue
         for nelev, npos in next_positions(elev, pos):
-            q.append((steps + 1, nelev, npos))
+            if valid_pos(npos):
+                q.append((steps + 1, nelev, npos))
 
 
 def part1(positions):
@@ -79,8 +84,11 @@ def part1(positions):
     return steps
 
 
-def part2():
-    return None
+def part2(positions):
+    # Part 2 involves adding two more pairs on floor 1
+    positions = positions + ((1, 1), (1, 1))
+    steps = bfs(positions)
+    return steps
 
 
 def main():
@@ -102,7 +110,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
