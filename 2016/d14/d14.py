@@ -5,9 +5,10 @@ import re
 
 
 class HashList:
-    def __init__(self, salt):
+    def __init__(self, salt, stretches=0):
         self.salt = salt
         self.hlist = []
+        self.stretches = stretches
 
     def get(self, i):
         if not isinstance(i, int):
@@ -16,18 +17,22 @@ class HashList:
             raise ValueError(f'i must be > 0; {i=}')
         if i >= len(self.hlist):
             for j in range(len(self.hlist), i + 1):
-                self.hlist.append(md5(self.salt + str(i)))
+                h = md5hex(self.salt + str(i))
+                for k in range(self.stretches):
+                    h = md5hex(h)
+                self.hlist.append(h)
         return self.hlist[i]
 
 
-def md5(msg):
+def md5hex(msg):
     m = hashlib.md5()
     m.update(msg.encode('UTF-8'))
     return m.hexdigest()
 
 
-def part1(salt):
-    hlist = HashList(salt)
+def findkeys(salt, stretches):
+    """Return the index when the 64th key is found."""
+    hlist = HashList(salt, stretches)
     keylist = []
     i = -1
 
@@ -37,21 +42,25 @@ def part1(salt):
         if mo1 := re.search(r'(.)\1\1', h):
             c = mo1.group(1)
             fwd_re = c * 5
-            for j in range(i + 1, i + 1002):
+            for j in range(i + 1, i + 1001):
                 if fwd_re in hlist.get(j):
                     keylist.append(h)
 
     return i
 
 
-def part2():
-    return None
+def part1(salt):
+    return findkeys(salt, 0)
+
+
+def part2(salt):
+    return findkeys(salt, 2016)
 
 
 def main():
     for inp in ('abc', 'yjdafjpo'):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
