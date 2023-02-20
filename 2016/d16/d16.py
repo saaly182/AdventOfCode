@@ -28,8 +28,10 @@ def part1(disklen, init_data):
     return checksum(filldisk(disklen, init_data))
 
 
-def part2():
-    return None
+def part2(disklen, init_data):
+    # part 2 changes the disklen
+    disklen = 35_651_584
+    return checksum(filldisk(disklen, init_data))
 
 
 def main():
@@ -38,7 +40,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(*inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(*inp))
         print()
 
 
