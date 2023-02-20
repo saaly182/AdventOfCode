@@ -1,10 +1,5 @@
 #!/usr/bin/python3 -u
 
-# Observation: The number of positions of every disc is prime, and they're
-# each distinct. So the product of the position counts is the interval at which
-# all the discs have their initial starting position. Not sure yet if that's
-# useful.
-
 from typing import NamedTuple
 
 
@@ -18,7 +13,7 @@ def disc_pos(disc, t):
     return (t + disc.init_pos) % disc.positions
 
 
-def part1(discs):
+def find_time(discs):
     # Gonna brute-force this...
     t = 0
     while True:
@@ -32,8 +27,13 @@ def part1(discs):
         t += 1
 
 
-def part2():
-    return None
+def part1(discs):
+    return find_time(discs)
+
+
+def part2(discs):
+    discs.append(Disc(11, 0))
+    return find_time(discs)
 
 
 def main():
@@ -55,9 +55,8 @@ def main():
         discs = []
         for d in inp:
             discs.append(Disc(*d))
-        discs = tuple(discs)
         print("Part 1 answer =", part1(discs))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(discs))
         print()
 
 
