@@ -58,8 +58,6 @@ def winner_part2(nelves):
     elf = elf_ring(nelves)
     elist = sorted(elf)
 
-    # Unlike in part1, in this part we're actively deleting elves who
-    # drop to zero presents.
     i = 1
     while True:
         if elf[i].presents == nelves:
