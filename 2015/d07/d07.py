@@ -34,7 +34,7 @@ def evaluate(item, connection):
             n2 = evaluate(var2, c)
             c[item] = n1 & n2
             return c[item]
-        case('OR', tok, var2):
+        case ('OR', tok, var2):
             n1 = evaluate(tok, c)
             n2 = evaluate(var2, c)
             c[item] = n1 | n2
