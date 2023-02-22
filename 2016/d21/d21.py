@@ -27,9 +27,10 @@ def rotate_by_position(a, b):
 
 
 def unrotate_by_position(a, b):
-    """Return list undo-ing rotate_by_position()."""
-    # Trying brute-force for now. Just try all rotations of "a" to see which
-    # one rotates by position to "a".
+    """Return list that produces "a" through rotate_by_position(b)."""
+    # Basically this fnc is an undo of rotate_by_position(). Trying brute-force
+    # for now. Just try all rotations of "a" to see which one
+    # rotates-by-position to "a".
     # TODO: figure out the non-brute-force approach for this.
     for i in range(len(a)):
         r = rotate_by_steps(a, 'left', i)
@@ -56,7 +57,7 @@ def scramble(pwstr, ops):
                 pw = rotate_by_steps(pw, direction, int(x))
             case ('rotate', 'based', 'on', 'position', 'of', 'letter', x):
                 pw = rotate_by_position(pw, x)
-            case('unrotate', 'based', 'on', 'position', 'of', 'letter', x):
+            case ('unrotate', 'based', 'on', 'position', 'of', 'letter', x):
                 pw = unrotate_by_position(pw, x)
             case ('reverse', 'positions', x, 'through', y):
                 x = int(x)
