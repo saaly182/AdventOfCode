@@ -111,8 +111,6 @@ def part2(operations):
     # fbgdceah?
 
     scrambled_pw = 'fbgdceah'
-    # scrambled_pw = 'dgfaehcb'
-    # scrambled_pw = 'decab'
     undo_operations = reverse_operations(operations)
     return scramble(scrambled_pw, undo_operations)
 
