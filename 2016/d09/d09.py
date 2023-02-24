@@ -37,8 +37,7 @@ def decompress(c):
             repeat = int(mo.group(2))
             idx += clen
             s = c[idx:idx + slen]
-            for _ in range(repeat):
-                d.extend(list(s))
+            d.extend(list(s) * repeat)
             idx += slen
         else:
             d.append(c[idx])
