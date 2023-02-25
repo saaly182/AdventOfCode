@@ -73,10 +73,11 @@ def execute(program, a=7):
             case 'nop':
                 pass
             case 'mul':
-                # Multiple reg-b * reg-d and store in reg-a; set reg-d = 0.
+                # Multiple reg-b * reg-d and store in reg-a; set reg-{c,d} = 0.
                 # NOTE: Not general purpose; super specific to part 2 of this
                 # problem.
                 register['a'] = register['b'] * register['d']
+                register['c'] = 0
                 register['d'] = 0
             case _:
                 raise ValueError(program[pc])
@@ -100,7 +101,7 @@ def part2(program):
     # 7 jnz c -2
     # 8 dec d
     # 9 jnz d -5
-    # is equivalent to a <- b * d; cpy 0 d
+    # is equivalent to a <- b * d; cpy 0 d; cpy 0 c
     # (as long as tgl doesn't modify the code)
 
     # Hack to change the specific input I got; not generalized.
