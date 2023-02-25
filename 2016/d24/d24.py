@@ -20,13 +20,15 @@ def loc_graph(fullgraph, location):
     return G
 
 
-def TSP(G):
+def TSP(G, return_home=False):
     """Return the minimum traveling-salesperson-problem distance."""
     min_dist = float('inf')
     nodes = set([a for pair in G.keys() for a in pair])
     nodes.remove(0)  # we are constrained to start from node 0
     for path in itertools.permutations(nodes):
-        path = (0, ) + path
+        path = (0,) + path
+        if return_home:
+            path = path + (0,)
         dist = 0
         for pair in itertools.pairwise(path):
             dist += G[pair]
@@ -40,8 +42,9 @@ def part1(full_graph, location):
     return TSP(graph)
 
 
-def part2():
-    return None
+def part2(full_graph, location):
+    graph = loc_graph(full_graph, location)
+    return TSP(graph, return_home=True)
 
 
 def slurp(fname):
@@ -75,7 +78,7 @@ def main():
     for inp in (sample_input, main_input):
         full_graph, location = parse(inp)
         print("Part 1 answer =", part1(full_graph, location))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(full_graph, location))
         print()
 
 
