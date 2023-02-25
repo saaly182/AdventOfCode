@@ -1,7 +1,6 @@
 #!/usr/bin/python3 -u
 
 import collections
-import math
 import heapq
 
 import sys
@@ -55,7 +54,7 @@ class CubeMaze:
         """Return distance from src to dst using dijkstra."""
         # See more details in ../../lib/aocutils.py. Obviously this needs a
         # specialized dijkstra to account for the infinite computed graph.
-        dist = collections.defaultdict(lambda: math.inf)
+        dist = collections.defaultdict(lambda: float('inf'))
         seen = collections.defaultdict(bool)
         minq = []
         dist[src] = 0

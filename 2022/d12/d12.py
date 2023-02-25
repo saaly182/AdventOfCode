@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -u
 
-import math
 import string
 import textwrap
 
@@ -31,19 +30,19 @@ def shortest_path(hm, start_v, end_v):
   prev = {}
   queue = set(G)
   for p in G:  # p = point
-    dist[p] = math.inf
+    dist[p] = float('inf')
   dist[start_v] = 0
 
   while queue:
     # NOTE: This is a totally brute force min-priority-queue, but it works.
     # I probably won't come back and redo this, because it requires a min-
     # priority-queue with decrease_key functionality for dijkstra.
-    min_dist = math.inf
+    min_dist = float('inf')
     for p in queue:
       if dist[p] < min_dist:
         min_dist = dist[p]
         u = p
-    if min_dist == math.inf:
+    if min_dist == float('inf'):
       return None
     if u == end_v:
       break
@@ -76,7 +75,7 @@ def part1(hm, start_v, end_v):
 
 
 def part2(hm, end_v):
-  min_pathlen = math.inf
+  min_pathlen = float('inf')
   for p in hm:
     if hm[p] == 1:  # 'a'
       path = shortest_path(hm, p, end_v)

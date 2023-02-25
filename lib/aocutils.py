@@ -5,7 +5,6 @@ Various utility functions for AoC
 
 import copy
 import heapq
-import math
 
 
 def drange(a, b):
@@ -59,7 +58,7 @@ def shortest_paths(G, src):
   seen = {}
   minq = []
   for v in G:
-    dist[v] = math.inf
+    dist[v] = float('inf')
     seen[v] = False
   dist[src] = 0
   heapq.heappush(minq, (0, src))
