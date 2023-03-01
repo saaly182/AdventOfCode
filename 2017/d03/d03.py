@@ -1,5 +1,9 @@
 #!/usr/bin/python3 -u
 
+import sys
+sys.path.append('../../lib')
+import dirutils
+
 # See:
 # https://projecteuler.net/problem=58
 # https://en.wikipedia.org/wiki/Ulam_spiral
@@ -20,9 +24,13 @@ def odd_squares():
 
 def ulam_coords(n):
     """Return the x, y coords of n on the Ulam spiral."""
+    if n < 1:
+        raise ValueError(f'value must be > 0; {n=}')
+
     if n == 1:
         return 0, 0
 
+    odd = oddsq = None
     for odd, oddsq in odd_squares():
         if oddsq >= n:
             break
@@ -50,6 +58,7 @@ def ulam_coords(n):
         x = bound
         y = -bound + 1 + n - last_pt
     else:
+        print(f'n should have been in ranges above: {n}')
         assert False  # should never get here
 
     return x, y
@@ -60,14 +69,26 @@ def part1(n):
     return abs(x) + abs(y)
 
 
-def part2():
-    return None
+def part2(limit):
+    cells = {(0, 0): 1}
+    n = 2
+    while True:
+        x, y = ulam_coords(n)
+        sm = 0
+        for dx, dy in dirutils.neighbors:
+            nx, ny = x + dx, y + dy
+            if (nx, ny) in cells:
+                sm += cells[(nx, ny)]
+        cells[(x, y)] = sm
+        if sm > limit:
+            return sm
+        n += 1
 
 
 def main():
     for inp in (12, 277678):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
