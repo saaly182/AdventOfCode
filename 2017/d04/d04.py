@@ -23,19 +23,12 @@ def slurp(fname):
         return [line.rstrip() for line in file.readlines()]
 
 
-def parse(inp):
-    passphrases = []
-    for line in inp:
-        passphrases.append(tuple(line.split()))
-    return tuple(passphrases)
-
-
 def main():
     sample_input = slurp('input/sample_input.txt')
     main_input = slurp('input/input.txt')
 
     for inp in (sample_input, main_input):
-        passphrases = parse(inp)
+        passphrases = tuple((tuple(a.split() for a in inp)))
         print("Part 1 answer =", part1(passphrases))
         print("Part 2 answer =", part2(passphrases))
         print()
