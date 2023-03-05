@@ -10,7 +10,7 @@ def execute(program):
 
     for cmd in program:
         r1, op, val1, r2, cmp, val2 = cmd
-        if cmp not in ('<', '<=', '>', '>=', '==', '!=',):
+        if cmp not in ('<', '<=', '>', '>=', '==', '!='):
             raise ValueError(f'syntax error in "{cmd}"')
         xop = eval(f'reg[r2] {cmp} {val2}')
         if xop:
