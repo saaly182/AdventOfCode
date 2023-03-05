@@ -10,22 +10,9 @@ def execute(program):
 
     for cmd in program:
         r1, op, val1, r2, cmp, val2 = cmd
-        a = reg[r2]
-        match cmp:
-            case '<':
-                xop = a < val2
-            case '<=':
-                xop = a <= val2
-            case '>':
-                xop = a > val2
-            case '>=':
-                xop = a >= val2
-            case '==':
-                xop = a == val2
-            case '!=':
-                xop = a != val2
-            case _:
-                raise ValueError(f'syntax error in "{cmd}"')
+        if cmp not in ('<', '<=', '>', '>=', '==', '!=',):
+            raise ValueError(f'syntax error in "{cmd}"')
+        xop = eval(f'reg[r2] {cmp} {val2}')
         if xop:
             match op:
                 case 'inc':
