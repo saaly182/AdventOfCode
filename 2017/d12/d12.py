@@ -32,16 +32,15 @@ def connected_components(graph: dict) -> set[tuple, ...]:
     return ccs
 
 
-def part1(graph: dict) -> int | None:
-    ccs = connected_components(graph)
+def part1(ccs: set[tuple, ...]) -> int | None:
     for cc in ccs:
         if 0 in cc:
             return len(cc)
     return None  # will only get here if 0 is not in the input
 
 
-def part2():
-    return None
+def part2(ccs: set[tuple, ...]) -> int:
+    return len(ccs)
 
 
 def slurp(fname: str) -> list[str]:
@@ -67,8 +66,9 @@ def main():
 
     for inp in (sample_input, main_input):
         graph = make_graph(inp)
-        print("Part 1 answer =", part1(graph))
-        print("Part 2 answer =", part2())
+        ccs = connected_components(graph)
+        print("Part 1 answer =", part1(ccs))
+        print("Part 2 answer =", part2(ccs))
         print()
 
 
