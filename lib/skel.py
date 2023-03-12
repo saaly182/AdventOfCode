@@ -8,7 +8,7 @@ def part2():
     return None
 
 
-def slurp(fname):
+def slurp(fname: str) -> list[str]:
     with open(fname) as file:
         return [line.rstrip() for line in file.readlines()]
 
