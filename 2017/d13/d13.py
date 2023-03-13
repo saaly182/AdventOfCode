@@ -24,12 +24,28 @@ def severity(firewall: dict[int, int]) -> int:
     return sev
 
 
+def is_caught(firewall: dict[int, int], delay: int) -> bool:
+    """Return True if the firewall would catch this attempt with given delay."""
+    maxdepth = max(firewall)
+    for t in range(delay, maxdepth + delay + 1):
+        layer = t - delay
+        if layer in firewall:
+            srange = firewall[layer]
+            if scanner_pos(srange, t) == 0:
+                return True  # caught by this layer
+    return False
+
+
 def part1(firewall: dict[int, int]) -> int:
     return severity(firewall)
 
 
-def part2():
-    return None
+def part2(firewall: dict[int, int]) -> int:
+    # Just gonna brute-force this
+    delay = 0
+    while is_caught(firewall, delay):
+        delay += 1
+    return delay
 
 
 def slurp(fname: str) -> list[str]:
@@ -52,7 +68,7 @@ def main():
     for inp in (sample_input, main_input):
         firewall = parse(inp)
         print("Part 1 answer =", part1(firewall))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(firewall))
         print()
 
 
