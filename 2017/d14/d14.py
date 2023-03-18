@@ -11,8 +11,7 @@ def make_graph(keystring: str) -> list[list[int]]:
     """Return the list of lists per the problem rules."""
     g = []
     for i in range(128):
-        bits = bin(int(d10.knot_hash(f'{keystring}-{i}'), base=16))[2:]
-        bits = '0' * (128 - len(bits)) + bits
+        bits = f"{int(d10.knot_hash(f'{keystring}-{i}'), base=16):0128b}"
         g.append([int(b) for b in bits])
     return g
 
