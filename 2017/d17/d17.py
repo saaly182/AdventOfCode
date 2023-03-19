@@ -1,17 +1,16 @@
 #!/usr/bin/python3 -u
 
-def make_cbuf(step_size: int, lastval: int) -> list[int]:
-    cbuf = [0]
-    pos = 0
+import collections
+
+
+def make_cbuf(step_size: int, lastval: int) -> collections.deque[int]:
+    # Totally had to get the hint from reddit that deque.rotate() is the key
+    # to making this work. See my brute-force attempt in the prev commit to
+    # this code.
+    cbuf = collections.deque([0])
     for i in range(1, lastval + 1):
-        pos = (pos + step_size) % len(cbuf)
-        if pos == len(cbuf) - 1:
-            cbuf.append(i)
-        else:
-            cbuf.insert(pos + 1, i)
-        pos += 1
-        if i % 100_000 == 0:
-            print(f'insertions left = {lastval - i:,}')
+        cbuf.rotate(-step_size)
+        cbuf.append(i)
     return cbuf
 
 
