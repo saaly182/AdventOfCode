@@ -49,7 +49,7 @@ class Valley:
         c = (c0 - 1 + (t_cmod * Valley.drdc[sym][1])) % (self.maxcol - 1) + 1
         return r, c
 
-    @functools.lru_cache(maxsize=None)
+    @functools.cache
     def _blizlocs(self, t):
         """Return the set of cells occupied by blizzards at time t."""
         blizcells = set()

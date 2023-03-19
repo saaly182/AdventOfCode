@@ -15,7 +15,7 @@ _time_limit = None
 
 
 # DP version
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def moving_score(path, ttl):
   'Return the score and time left as of right when the last valve opened.'
   # NOTE: Have to use ttl as a parameter instead of using the global
@@ -37,7 +37,7 @@ def moving_score(path, ttl):
   return score, time_left
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def static_score(path, duration):
   'Return score for the open valves in the path for the duration.'
   score = 0

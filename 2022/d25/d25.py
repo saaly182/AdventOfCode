@@ -20,7 +20,7 @@ def snafu2decimal(sna):
     return dec
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def all_twos(place_val):
     """Return the value of the all-twos snafu num (e.g., "22222")."""
     # This is the largest snafu number with this many digits. The next snafu
