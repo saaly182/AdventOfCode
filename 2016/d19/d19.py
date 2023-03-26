@@ -35,22 +35,6 @@ def elf_across(elist, i):
     return elist[j_loc], j_loc
 
 
-def winner_part1(nelves):
-    """Return the number of the elf that ends up with everything."""
-    elf = elf_ring(nelves)
-
-    i = 1
-    while True:
-        if elf[i].presents == nelves:
-            # This elf has all the presents
-            return i
-        # take all presents from the next elf
-        j = elf[i].next_elf
-        elf[i].presents += elf[j].presents
-        elf_unlink(elf, j)
-        i = elf[i].next_elf
-
-
 def winner_part2(nelves):
     # This is slow... Took 30 minutes using pypy3 on my machine.
     # Didn't find a faster way to handle the "across the circle"
@@ -74,7 +58,18 @@ def winner_part2(nelves):
 
 
 def part1(nelves):
-    return winner_part1(nelves)
+    """Return the number of the elf that ends up with everything.
+
+    Use the analytical solution described in detail at
+    https://www.youtube.com/watch?v=uCsD3ZGzMgE
+    Video title = "The Josephus Problem - Numberphile"
+    """
+    p2 = 1  # powers of two
+    while p2 <= nelves:
+        p2 *= 2
+    p2 //= 2
+    l = nelves - p2
+    return 2 * l + 1
 
 
 def part2(nelves):
