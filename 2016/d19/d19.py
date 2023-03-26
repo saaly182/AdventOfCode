@@ -33,7 +33,7 @@ def part2(nelves):
     5   2
      4 3
 
-    In the example above, right starts as [1,2,3] and left as [4,5].
+    In the example above, right starts as [1,2] and left as [3,4,5].
     """
     right = collections.deque(range(1, nelves // 2 + 1))
     left = collections.deque(range(nelves // 2 + 1, nelves + 1))
