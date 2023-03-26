@@ -1,60 +1,6 @@
 #!/usr/bin/python3 -u
 
-import dataclasses
-
-
-@dataclasses.dataclass
-class Elf:
-    presents: int
-    next_elf: int
-    prev_elf: int
-
-
-def elf_ring(nelves):
-    # Doubly-linked ring
-    elf = {}
-    for i in range(2, nelves):
-        elf[i] = Elf(1, i + 1, i - 1)
-    elf[1] = Elf(1, 2, nelves)
-    elf[nelves] = Elf(1, 1, nelves - 1)
-    return elf
-
-
-def elf_unlink(elf, i):
-    n = elf[i].next_elf
-    p = elf[i].prev_elf
-    elf[n].prev_elf = p
-    elf[p].next_elf = n
-    del elf[i]
-
-
-def elf_across(elist, i):
-    """Return the elf num & idx of the elf across the circle from i."""
-    i_loc = elist.index(i)
-    j_loc = (i_loc + len(elist) // 2) % len(elist)
-    return elist[j_loc], j_loc
-
-
-def winner_part2(nelves):
-    # This is slow... Took 30 minutes using pypy3 on my machine.
-    # Didn't find a faster way to handle the "across the circle"
-    # aspect of part 2.
-    elf = elf_ring(nelves)
-    elist = sorted(elf)
-
-    i = 1
-    while True:
-        if elf[i].presents == nelves:
-            # This elf has all the presents
-            return i
-        # take from the elf across the circle
-        j, j_idx = elf_across(elist, i)
-        elf[i].presents += elf[j].presents
-        del elist[j_idx]
-        elf_unlink(elf, j)
-        if len(elist) % 10_000 == 0:
-          print(f'{len(elist)=}')
-        i = elf[i].next_elf
+import collections
 
 
 def part1(nelves):
@@ -68,12 +14,40 @@ def part1(nelves):
     while p2 <= nelves:
         p2 *= 2
     p2 //= 2
-    l = nelves - p2
-    return 2 * l + 1
+    b = nelves - p2
+    return 2 * b + 1
 
 
 def part2(nelves):
-    return winner_part2(nelves)
+    """Return the number of the elf that ends up with everything.
+
+    My attempt at this was brute force with a doubly-linked list
+    and took 30m to run. Eventually returned to this problem and
+    researched other people's approaches. Settled on the scheme
+    described at
+    https://www.reddit.com/r/adventofcode/comments/5j4lp1/comment/dbdnz4l
+    This keeps the circle as two balanced deques so that it's always cheap and
+    easy to handle the position "across" the circle.
+
+      1
+    5   2
+     4 3
+
+    In the example above, right starts as [1,2,3] and left as [4,5].
+    """
+    right = collections.deque(range(1, nelves // 2 + 1))
+    left = collections.deque(range(nelves // 2 + 1, nelves + 1))
+
+    while right:
+        # head of right eliminates head of left
+        left.popleft()
+        # keep sides balanced
+        if len(left) == len(right):
+            right.append(left.popleft())
+        # head of right now goes to tail of left
+        left.append(right.popleft())
+
+    return left[0]
 
 
 def main():
