@@ -7,11 +7,12 @@ import dirutils
 SPACE = ' '
 
 
-def part1(diagram: tuple) -> str:
+def travel_path(diagram: tuple) -> tuple[str, int]:
     r1 = 0
     c1 = diagram[0].index('|')
     dirvec = dirutils.dirvecs['S']
     letters = []
+    step_count = 1
     at_end = False
 
     while not at_end:
@@ -26,6 +27,8 @@ def part1(diagram: tuple) -> str:
                 continue
             else:
                 raise
+
+        step_count += 1
 
         if x == '|' or x == '-':
             pass
@@ -68,11 +71,15 @@ def part1(diagram: tuple) -> str:
             raise ValueError(f'invalid char at {r2}, {c2}: {x}')
         r1, c1 = r2, c2
 
-    return ''.join(letters)
+    return ''.join(letters), step_count
 
 
-def part2():
-    return None
+def part1(diagram: tuple) -> str:
+    return travel_path(diagram)[0]
+
+
+def part2(diagram: tuple) -> int:
+    return travel_path(diagram)[1]
 
 
 def slurp(fname: str) -> list[str]:
@@ -94,7 +101,7 @@ def main():
     for inp in (sample_input, main_input):
         diagram = parse(inp)
         print("Part 1 answer =", part1(diagram))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(diagram))
         print()
 
 
