@@ -60,7 +60,7 @@ def travel_path(diagram: tuple) -> tuple[str, int]:
                 if dirvec[0] + uv[0] == 0 and dirvec[1] + uv[1] == 0:
                     # this is going back from where we came, so ignore
                     continue
-                assert new_dirvec is None  # otherwise there are two exits
+                assert new_dirvec is None  # otherwise there multiple exits
                 new_dirvec = uv
             if new_dirvec is None:
                 at_end = True
