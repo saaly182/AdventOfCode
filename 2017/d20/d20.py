@@ -65,7 +65,7 @@ def remove_collisions(particles: list[Particle]) -> None:
 
 def vector_add(a: tuple, b: tuple) -> tuple:
     vsum = []
-    for ai, bi in zip(a, b):
+    for ai, bi in zip(a, b, strict=True):
         vsum.append(ai + bi)
     return tuple(vsum)
 
