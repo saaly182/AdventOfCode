@@ -8,24 +8,15 @@ from collections import defaultdict
 
 CLEAN = '.'
 INFECTED = '#'
+WEAKENED = 'W'
+FLAGGED = 'F'
+TURN = {('U', 'R'): 'R', ('U', 'L'): 'L', ('U', 'REV'): 'D',
+        ('D', 'R'): 'L', ('D', 'L'): 'R', ('D', 'REV'): 'U',
+        ('R', 'R'): 'D', ('R', 'L'): 'U', ('R', 'REV'): 'L',
+        ('L', 'R'): 'U', ('L', 'L'): 'D', ('L', 'REV'): 'R'}
 
 
 def part1(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
-    # Rules:
-    # *** If the current node is infected, it turns to its right. Otherwise,
-    # it turns to its left. (Turning is done in-place; the current node does
-    # not change.)
-    # *** If the current node is clean, it becomes infected. Otherwise,
-    # it becomes cleaned. (This is done after the node is considered for the
-    # purposes of changing direction.)
-    # *** The virus carrier moves forward one node in the direction it is
-    # facing.
-
-    turn = {('U', 'R'): 'R', ('U', 'L'): 'L',
-            ('D', 'R'): 'L', ('D', 'L'): 'R',
-            ('R', 'R'): 'D', ('R', 'L'): 'U',
-            ('L', 'R'): 'U', ('L', 'L'): 'D'}
-
     current_node = center
     direction = 'U'
     bursts = 10_000
@@ -33,7 +24,7 @@ def part1(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
     for burst in range(bursts):
         state1 = nodemap[current_node]
         tdir = 'R' if state1 == INFECTED else 'L'
-        direction = turn[(direction, tdir)]
+        direction = TURN[(direction, tdir)]
         state2 = INFECTED if state1 == CLEAN else CLEAN
         if state2 == INFECTED:
             infections += 1
@@ -45,8 +36,39 @@ def part1(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
     return infections
 
 
-def part2():
-    return None
+def part2(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
+    # This violates DRY wrt to part1() above, but for performance I am not
+    # going to try to make one function that operates in two separate modes.
+    current_node = center
+    direction = 'U'
+    bursts = 10_000_000
+    infections = 0
+    for burst in range(bursts):
+        state1 = nodemap[current_node]
+        if state1 == CLEAN:
+            tdir = 'L'
+            state2 = WEAKENED
+        elif state1 == INFECTED:
+            tdir = 'R'
+            state2 = FLAGGED
+        elif state1 == WEAKENED:
+            tdir = None
+            state2 = INFECTED
+            infections += 1
+        elif state1 == FLAGGED:
+            tdir = 'REV'
+            state2 = CLEAN
+        else:
+            raise ValueError(f'invalid state ({state1=})')
+        if state1 != WEAKENED:
+            direction = TURN[(direction, tdir)]
+
+        nodemap[current_node] = state2
+        next_node = (current_node[0] + dirutils.dirvecs[direction][0],
+                     current_node[1] + dirutils.dirvecs[direction][1])
+        current_node = next_node
+
+    return infections
 
 
 def slurp(fname: str) -> list[str]:
@@ -72,8 +94,8 @@ def main():
 
     for inp in (sample_input, main_input):
         nodemap, center = parse(inp)
-        print("Part 1 answer =", part1(nodemap, center))
-        print("Part 2 answer =", part2())
+        print("Part 1 answer =", part1(nodemap.copy(), center))
+        print("Part 2 answer =", part2(nodemap.copy(), center))
         print()
 
 
