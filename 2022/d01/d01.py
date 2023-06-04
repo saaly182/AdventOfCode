@@ -2,8 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-
-from multiline_record import multiline_file
+from multiline_record import multiline_file  # noqa: E402
 
 debug = False
 use_sample = False

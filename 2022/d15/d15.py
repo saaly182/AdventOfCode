@@ -1,12 +1,11 @@
 #!/usr/bin/python3 -u
 
-import sys
-sys.path.append('../../lib')
-from aocutils import merge_intervals
-
 from collections import defaultdict
 from datetime import datetime
 import re
+import sys
+sys.path.append('../../lib')
+from aocutils import merge_intervals  # noqa: E402
 
 
 def dist(a, b):

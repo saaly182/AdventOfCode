@@ -5,7 +5,7 @@ import heapq
 
 import sys
 sys.path.append('../../lib')
-from dirutils import unitvecs
+from dirutils import unitvecs  # noqa: E402
 
 
 class CubeMaze:

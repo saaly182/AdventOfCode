@@ -2,8 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-
-import dirutils
+import dirutils  # noqa: E402
 
 keypad_part1 = ['00000',
                 '01230',

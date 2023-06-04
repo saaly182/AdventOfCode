@@ -1,10 +1,9 @@
 #!/usr/bin/python3 -u
 
+import collections
 import sys
 sys.path.append('../../lib')
-
-import collections
-import dirutils
+import dirutils  # noqa: E402
 
 
 def part1(moves):

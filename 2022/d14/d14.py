@@ -1,10 +1,9 @@
 #!/usr/bin/python3 -u
 
+from collections import defaultdict
 import sys
 sys.path.append('../../lib')
-
-from collections import defaultdict
-from aocutils import drange
+from aocutils import drange  # noqa: E402
 
 
 class Cave1:

@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-import aocutils
+import aocutils  # noqa: E402
 
 
 def merge_adjacent_intervals(ilist):

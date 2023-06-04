@@ -1,11 +1,10 @@
 #!/usr/bin/python3 -u
 
-import sys
-sys.path.append('../../lib')
-
-import dirutils
 import functools
 import math
+import sys
+sys.path.append('../../lib')
+import dirutils  # noqa: E402
 
 
 class Valley:

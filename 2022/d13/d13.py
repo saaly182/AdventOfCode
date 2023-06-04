@@ -1,10 +1,9 @@
 #!/usr/bin/python3 -u
 
+import functools
 import sys
 sys.path.append('../../lib')
-
-import functools
-from multiline_record import multiline_data
+from multiline_record import multiline_data  # noqa: E402
 
 
 def make_pairs(inp):

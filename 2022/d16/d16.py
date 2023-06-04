@@ -1,12 +1,12 @@
 #!/usr/bin/python3 -u
 
-import sys
-sys.path.append('../../lib')
-from aocutils import shortest_paths
-
 from collections import defaultdict
 import functools
 import re
+import sys
+sys.path.append('../../lib')
+from aocutils import shortest_paths  # noqa: E402
+
 
 # globals
 _flowrates = None

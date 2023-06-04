@@ -1,11 +1,11 @@
 #!/usr/bin/python3 -u
 
-import sys
-sys.path.append('../../lib')
-import aocutils
-import dirutils
 import itertools
 import re
+import sys
+sys.path.append('../../lib')
+import aocutils  # noqa: E402
+import dirutils  # noqa: E402
 
 
 def loc_graph(fullgraph, location):

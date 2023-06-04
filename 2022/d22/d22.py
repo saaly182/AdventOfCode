@@ -1,11 +1,10 @@
 #!/usr/bin/python3 -u
 
+from collections import namedtuple
 import sys
 sys.path.append('../../lib')
-
-from collections import namedtuple
-from multiline_record import multiline_file
-import dirutils
+from multiline_record import multiline_file  # noqa: E402
+import dirutils  # noqa: E402
 
 
 class Walker:
