@@ -1,10 +1,10 @@
 #!/usr/bin/python3 -u
 
+from typing import DefaultDict
+from collections import defaultdict
 import sys
 sys.path.append('../../lib')
-
-import dirutils
-from collections import defaultdict
+import dirutils  # noqa: E402
 
 CLEAN = '.'
 INFECTED = '#'
@@ -16,7 +16,8 @@ TURN = {('U', 'R'): 'R', ('U', 'L'): 'L', ('U', 'REV'): 'D',
         ('L', 'R'): 'U', ('L', 'L'): 'D', ('L', 'REV'): 'R'}
 
 
-def part1(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
+def part1(nodemap: DefaultDict[tuple[int, int], str],
+          center: tuple[int, int]) -> int:
     current_node = center
     direction = 'U'
     bursts = 10_000
@@ -36,7 +37,8 @@ def part1(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
     return infections
 
 
-def part2(nodemap: defaultdict[str], center: tuple[int, int]) -> int:
+def part2(nodemap: DefaultDict[tuple[int, int], str],
+          center: tuple[int, int]) -> int:
     # This violates DRY wrt to part1() above, but for performance I am not
     # going to try to make one function that operates in two separate modes.
     current_node = center
@@ -76,9 +78,10 @@ def slurp(fname: str) -> list[str]:
         return [line.rstrip() for line in file.readlines()]
 
 
-def parse(inp: list) -> tuple[defaultdict[str], tuple[int, int]]:
+def parse(inp: list) -> tuple[DefaultDict[tuple[int, int], str],
+                              tuple[int, int]]:
     assert len(inp) % 2 == 1 and len(inp[0]) % 2 == 1
-    nodemap = defaultdict(lambda: '.')
+    nodemap: DefaultDict[tuple[int, int], str] = defaultdict(lambda: '.')
     r = c = -99
     for r, line in enumerate(inp):
         for c, val in enumerate(line):
