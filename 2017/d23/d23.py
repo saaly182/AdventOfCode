@@ -33,10 +33,8 @@ def part1(program: tuple) -> int:
                 if thisop == 'mul':
                     mulcount += 1
             case 'jnz':
-                xval = opval(op1)
-                if xval != 0:
-                    yval = opval(op2)
-                    pc_add = yval
+                if opval(op1) != 0:
+                    pc_add = opval(op2)
             case _:
                 raise ValueError(f'Illegal instruction: {program[pc]}')
 
