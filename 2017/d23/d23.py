@@ -1,7 +1,15 @@
 #!/usr/bin/python3 -u
 
 from collections import defaultdict
+import math
 import operator
+
+
+def is_prime(n):
+    for i in range(2, int(math.sqrt(n)) + 2):
+        if n % i == 0:
+            return False
+    return True
 
 
 def decode(mem: tuple) -> tuple:
@@ -43,8 +51,21 @@ def part1(program: tuple) -> int:
     return mulcount
 
 
-def part2():
-    pass
+def part2() -> int:
+    """
+    I hand-decompiled my input data. You can see the results in the
+    decompiled.py file in this directory. There's also a C version. Inspection
+    of the while-loops in that code reveal that part2 is just counting the
+    number of non-prime numbers between [b, c] with steps of 17. This function
+    is obviously super specific to the input I got.
+    """
+    b = 67 * 100 + 100000
+    c = b + 17000
+    h = 0
+    for n in range(b, c + 1, 17):
+        if not is_prime(n):
+            h += 1
+    return h
 
 
 def slurp(fname: str) -> list[str]:
