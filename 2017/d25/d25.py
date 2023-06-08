@@ -65,6 +65,13 @@ In state F:
 """
 
 from collections import defaultdict
+from typing import NamedTuple
+
+
+class Command(NamedTuple):
+    write_val: int
+    pos_incr: int
+    next_state: str
 
 
 def part1() -> int:
@@ -72,21 +79,21 @@ def part1() -> int:
     tape = defaultdict(int)
     pos = 0
     rules = {
-        ('A', 0): (1,  1, 'B'), ('A', 1): (0, -1, 'B'),
-        ('B', 0): (0,  1, 'C'), ('B', 1): (1, -1, 'B'),
-        ('C', 0): (1,  1, 'D'), ('C', 1): (0, -1, 'A'),
-        ('D', 0): (1, -1, 'E'), ('D', 1): (1, -1, 'F'),
-        ('E', 0): (1, -1, 'A'), ('E', 1): (0, -1, 'D'),
-        ('F', 0): (1,  1, 'A'), ('F', 1): (1, -1, 'E'),
+        ('A', 0): Command(1,  1, 'B'), ('A', 1): Command(0, -1, 'B'),
+        ('B', 0): Command(0,  1, 'C'), ('B', 1): Command(1, -1, 'B'),
+        ('C', 0): Command(1,  1, 'D'), ('C', 1): Command(0, -1, 'A'),
+        ('D', 0): Command(1, -1, 'E'), ('D', 1): Command(1, -1, 'F'),
+        ('E', 0): Command(1, -1, 'A'), ('E', 1): Command(0, -1, 'D'),
+        ('F', 0): Command(1,  1, 'A'), ('F', 1): Command(1, -1, 'E'),
     }
 
     for _ in range(12629077):
         assert tape[pos] == 0 or tape[pos] == 1
         assert state in 'ABCDEF'
         cmd = rules[(state, tape[pos])]
-        tape[pos] = cmd[0]
-        pos += cmd[1]
-        state = cmd[2]
+        tape[pos] = cmd.write_val
+        pos += cmd.pos_incr
+        state = cmd.next_state
 
     return list(tape.values()).count(1)
 
