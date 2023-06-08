@@ -57,8 +57,21 @@ def part1(components: tuple) -> int:
     return max_st
 
 
-def part2():
-    return None
+def part2(components: tuple) -> int:
+    # fyi - I know I'm repeating the whole generation of all the bridges
+    # here in part 2. I could compute both part 1 and part 2 answers in one
+    # loop, but I just wanted to keep the two parts separate for clarity for
+    # now.
+    max_len = 0
+    longest_bridges = []
+    for b in gen_bridges(components):
+        lb = len(b)
+        if lb > max_len:
+            max_len = lb
+            longest_bridges = [b.copy()]
+        elif lb == max_len:
+            longest_bridges.append(b.copy())
+    return max([strength(b) for b in longest_bridges])
 
 
 def slurp(fname: str) -> list[str]:
@@ -83,7 +96,7 @@ def main():
     for inp in (sample_input, main_input):
         components = parse(inp)
         print("Part 1 answer =", part1(components))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(components))
         print()
 
 
