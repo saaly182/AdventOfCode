@@ -36,8 +36,8 @@ def part1(logfile: list, strategy=1) -> int:
             gid = int(mo.group(2))
             if gid not in guard:
                 guard[gid] = [0] * 60  # this tracks sleep minutes
-                minute = 0
-                awake = True  # assume guards is awake when shift starts
+            minute = 0
+            awake = True  # assume guards is awake when shift starts
 
         # 'falls asleep' log line
         elif mo := re.fullmatch(fpat, line):
