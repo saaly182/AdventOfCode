@@ -14,25 +14,25 @@ class Claim(NamedTuple):
 
 
 def mark_fabric(claims: tuple) -> DefaultDict[tuple, list]:
-    fabric = defaultdict(list)
+    fabric = defaultdict(set)
     for claim in claims:
         for r in range(claim.r0, claim.r0 + claim.height):
             for c in range(claim.c0, claim.c0 + claim.width):
-                fabric[(r, c)].append(claim.id)
+                fabric[(r, c)].add(claim.id)
     return fabric
 
 
-def part1(fabric: DefaultDict[tuple, list]) -> int:
+def part1(fabric: DefaultDict[tuple, set]) -> int:
     return sum([1 for cell, claim_ids in fabric.items() if len(claim_ids) > 1])
 
 
-def part2(fabric: DefaultDict[tuple, list]) -> int:
+def part2(fabric: DefaultDict[tuple, set]) -> int:
+    # Start by marking all claims as non-overlapping, and then remove the ones
+    # determined to actually be overlapping.
     nonoverlap_claims = {cid for cids in fabric.values() for cid in cids}
     for cell, claim_ids in fabric.items():
         if len(claim_ids) > 1:
-            for cid in claim_ids:
-                if cid in nonoverlap_claims:
-                    nonoverlap_claims.remove(cid)
+            nonoverlap_claims.difference_update(claim_ids)
     assert len(nonoverlap_claims) == 1
     answer_claim, = nonoverlap_claims
     return answer_claim
