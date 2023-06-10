@@ -3,11 +3,14 @@
 import re
 
 
-def part1(logfile: list) -> int:
+def part1(logfile: list, strategy=1) -> int:
     guard = {}
     gid = None
     awake = True
     minute = 0
+
+    if strategy not in (1, 2):
+        raise ValueError(f'bad strategy: {strategy} -- must be 1 or 2')
 
     # [1518-04-25 00:00] Guard #2381 begins shift
     gpat = re.compile(
@@ -54,22 +57,31 @@ def part1(logfile: list) -> int:
         else:
             raise ValueError(f'bad input: {line}')
 
-    most_sleepy_gid = None
-    max_sleep_time = -1
-    for gid in guard:
-        sleep_time = sum(guard[gid])
-        if sleep_time > max_sleep_time:
-            max_sleep_time = sleep_time
-            most_sleepy_gid = gid
+    target_gid = None
+    assert strategy in (1, 2)
+    if strategy == 1:
+        max_sleep_time = -1
+        for gid in guard:
+            sleep_time = sum(guard[gid])
+            if sleep_time > max_sleep_time:
+                max_sleep_time = sleep_time
+                target_gid = gid
+    else:
+        max_sleep_minute = -1
+        for gid in guard:
+            sleep_minute = max(guard[gid])
+            if sleep_minute > max_sleep_minute:
+                max_sleep_minute = sleep_minute
+                target_gid = gid
 
     most_sleepy_minute = (
-        guard[most_sleepy_gid].index(max(guard[most_sleepy_gid])))
+        guard[target_gid].index(max(guard[target_gid])))
 
-    return most_sleepy_gid * most_sleepy_minute
+    return target_gid * most_sleepy_minute
 
 
-def part2():
-    return None
+def part2(logfile: list) -> int:
+    return part1(logfile, strategy=2)
 
 
 def slurp(fname: str) -> list[str]:
@@ -83,7 +95,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
