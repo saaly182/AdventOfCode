@@ -13,7 +13,7 @@ class Claim(NamedTuple):
     height: int
 
 
-def mark_fabric(claims: tuple) -> DefaultDict[tuple, list]:
+def mark_fabric(claims: tuple) -> DefaultDict[tuple, set]:
     fabric = defaultdict(set)
     for claim in claims:
         for r in range(claim.r0, claim.r0 + claim.height):
