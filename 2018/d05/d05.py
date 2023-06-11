@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -u
 
-def part1(polymer: str, unitpairs: dict) -> int:
+def react(polymer: tuple, unitpairs: dict) -> int:
     p1 = list(polymer)
     p2 = []
     changed = True
@@ -28,8 +28,17 @@ def part1(polymer: str, unitpairs: dict) -> int:
     return len(p2)
 
 
-def part2():
-    return None
+def part1(polymer: str, unitpairs: dict) -> int:
+    return react(tuple(polymer), unitpairs)
+
+
+def part2(polymer: str, unitpairs: dict) -> int:
+    units_upper = set([x.upper() for x in polymer])
+    min_plen = react(tuple(polymer), unitpairs)
+    for unit in units_upper:
+        p1 = tuple([x for x in polymer if x not in (unit, unitpairs[unit])])
+        min_plen = min(min_plen, react(p1, unitpairs))
+    return min_plen
 
 
 def slurp(fname: str) -> list[str]:
@@ -56,7 +65,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp[0], unitpairs))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp[0], unitpairs))
         print()
 
 
