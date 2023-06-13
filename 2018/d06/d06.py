@@ -54,8 +54,20 @@ def part1(coords: tuple) -> int:
     return max([gv.count(x) for x in cids])
 
 
-def part2():
-    return None
+def part2(coords: tuple) -> int:
+    """
+    What is the size of the region containing all locations which have a
+    total distance to all given coordinates of less than 10000?
+    """
+    limit = 10_000
+    grid = {}
+    r1, r2, c1, c2 = bounding_box(coords)
+    for r in range(r1, r2 + 1):
+        for c in range(c1, c2 + 1):
+            total_dist = sum([manhattan((r, c), coord) for coord in coords])
+            if total_dist < limit:
+                grid[(r, c)] = True
+    return len(grid)
 
 
 def slurp(fname: str) -> list[str]:
@@ -79,7 +91,7 @@ def main():
     for inp in (sample_input, main_input):
         coords = parse(inp)
         print("Part 1 answer =", part1(coords))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(coords))
         print()
 
 
