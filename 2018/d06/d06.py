@@ -1,9 +1,9 @@
 #!/usr/bin/python3 -u
 
 
-def manhattan(cell1: tuple[int, int], cell2: tuple[int, int]) -> int:
+def manhattan(cella: tuple[int, int], cellb: tuple[int, int]) -> int:
     """Return the manhattan distance between the two cells."""
-    return abs(cell1[0] - cell2[0]) + abs(cell1[1] - cell2[1])
+    return abs(cella[0] - cellb[0]) + abs(cella[1] - cellb[1])
 
 
 def closest_coord(r: int, c: int, coords: tuple) -> int:
