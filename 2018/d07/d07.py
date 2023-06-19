@@ -26,8 +26,36 @@ def part1(presteps: dict, poststeps: dict) -> str:
     return ''.join(order)
 
 
-def part2():
-    return None
+def part2(presteps: dict, poststeps: dict, num_workers=5, fixed_time=60) -> int:
+    pr = copy.deepcopy(presteps)
+    po = copy.deepcopy(poststeps)
+    nodes = set(list(pr.keys()) + list(po.keys()))
+    nodetimer = defaultdict(int)
+    workslots = set()
+
+    t = 0  # seconds
+    while nodes:
+        if openslots := num_workers - len(workslots):
+            unblocked = sorted(nodes - set(pr.keys()) - workslots)
+            start_nodes = unblocked[:openslots]
+            workslots.update(start_nodes)
+            for sn in start_nodes:
+                nodetimer[sn] = fixed_time + ord(sn) - ord('A') + 1
+
+        for node in list(nodetimer.keys()):
+            nodetimer[node] -= 1
+            if nodetimer[node] == 0:
+                del nodetimer[node]
+                nodes.remove(node)
+                workslots.remove(node)
+                for n in po[node]:
+                    pr[n].remove(node)
+                    if not pr[n]:
+                        del pr[n]
+
+        t += 1
+
+    return t
 
 
 def slurp(fname: str) -> list[str]:
@@ -57,7 +85,7 @@ def main():
     for inp in (sample_input, main_input):
         presteps, poststeps = parse(inp)
         print("Part 1 answer =", part1(presteps, poststeps))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(presteps, poststeps))
         print()
 
 
