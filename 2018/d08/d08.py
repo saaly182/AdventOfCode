@@ -5,7 +5,7 @@ import collections
 
 class Node:
     def __init__(self, nums: list):
-        # recursively creates child Nodes
+        # recursively creates child Nodes, and also consumes the nums list
         self.id = len(nums)
         self.num_children = nums.pop()
         self.num_metadata = nums.pop()
