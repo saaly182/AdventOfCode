@@ -7,14 +7,25 @@ class Node:
     def __init__(self, nums: list):
         # recursively creates child Nodes
         self.id = len(nums)
-        num_children = nums.pop()
-        num_metadata = nums.pop()
+        self.num_children = nums.pop()
+        self.num_metadata = nums.pop()
         self.children = []
         self.metadata = []
-        for c in range(num_children):
+        for c in range(self.num_children):
             self.children.append(Node(nums))
-        for m in range(num_metadata):
+        for m in range(self.num_metadata):
             self.metadata.append(nums.pop())
+
+    def value(self):
+        if not self.children:
+            val = sum(self.metadata)
+        else:
+            val = 0
+            for m in self.metadata:
+                if m < 1 or m > self.num_children:
+                    continue
+                val += self.children[m - 1].value()
+        return val
 
     def __repr__(self):
         return f'Node({self.id=} {self.children=} {self.metadata=})'
@@ -32,8 +43,9 @@ def part1(input_nums: tuple) -> int:
     return metadata_sum
 
 
-def part2():
-    return None
+def part2(input_nums: tuple) -> int:
+    root = Node(list(reversed(input_nums)))
+    return root.value()
 
 
 def slurp(fname: str) -> list[str]:
@@ -48,7 +60,7 @@ def main():
     for inp in (sample_input, main_input):
         input_nums = tuple([int(x) for x in inp[0].split()])
         print("Part 1 answer =", part1(input_nums))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(input_nums))
         print()
 
 
