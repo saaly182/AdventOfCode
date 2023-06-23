@@ -22,9 +22,8 @@ class Node:
         else:
             val = 0
             for m in self.metadata:
-                if m < 1 or m > self.num_children:
-                    continue
-                val += self.children[m - 1].value()
+                if 1 <= m <= self.num_children:
+                    val += self.children[m - 1].value()
         return val
 
     def __repr__(self):
