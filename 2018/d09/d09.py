@@ -1,5 +1,8 @@
 #!/usr/bin/python3 -u
 
+# Ergh! This can all be done using deque's rotate() method.
+# TODO: rewrite using deque
+
 class Node:
     def __init__(self, marble_num, left=None, right=None):
         # note: I'm unsure how to type hint this function...
