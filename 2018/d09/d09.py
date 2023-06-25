@@ -1,32 +1,75 @@
 #!/usr/bin/python3 -u
 
-def show(circle, pos):
-    for i, c in enumerate(circle):
-        if i == pos:
-            print(f'({c}) ', end='')
+class Node:
+    def __init__(self, marble_num, left=None, right=None):
+        # note: I'm unsure how to type hint this function...
+        self.marble = marble_num
+        self.left = left
+        self.right = right
+
+
+def show(start_node, pos) -> None:
+    node = start_node
+    while True:
+        if node == pos:
+            print(f'({node.marble}) ', end='')
         else:
-            print(f'{c} ', end='')
+            print(f'{node.marble} ', end='')
+        node = node.right
+        if node is start_node:
+            break
     print()
 
 
-def part1(num_players: int, hi_marble: int) -> int:
-    circle = [0]
-    scores = [0] * (num_players + 1)
-    player = 1
-    pos = 0
+def delete_node(node: Node) -> None:
+    node.left.right = node.right
+    node.right.left = node.left
+    # del node
 
-    for marble in range(1, hi_marble + 1):
+
+def insert_right(node: Node, marble: int) -> None:
+    new_node = Node(marble)
+    new_node.left = node
+    new_node.right = node.right
+    new_node.right.left = new_node
+    node.right = new_node
+
+
+def validate_doubly_linked_list(start_node: Node) -> bool:
+    node = start_node
+    while True:
+        if node.left.right is not node:
+            print(f'err: {node.marble} left side, {node.left.right.marble=}')
+            return False
+        if node.right.left is not node:
+            print(f'err: {node.marble} right side, {node.right.left.marble=}')
+            return False
+        node = node.right
+        if node is start_node:
+            break
+    return True
+
+
+def part1(num_players: int, hi_marble: int) -> int:
+    # start by initializing the first two nodes
+    start_node = Node(0)
+    start_node.left = start_node.right = start_node
+    insert_right(start_node, 1)
+    pos = start_node.right
+    scores = [0] * (num_players + 1)
+    player = 2
+
+    for marble in range(2, hi_marble + 1):
         if marble % 23 == 0:
-            delidx = pos - 7
-            scores[player] += marble + circle[delidx]
-            pos = delidx if delidx >= 0 else len(circle) + delidx
-            del circle[delidx]
+            for _ in range(7):
+                pos = pos.left
+            scores[player] += marble + pos.marble
+            next_node = pos.right
+            delete_node(pos)
+            pos = next_node
         else:
-            ins = (pos + 2) % len(circle)
-            if ins == 0:
-                ins = len(circle)
-            circle.insert(ins, marble)
-            pos = ins
+            insert_right(pos.right, marble)
+            pos = pos.right.right
 
         player += 1
         if player > num_players:
