@@ -1,82 +1,22 @@
 #!/usr/bin/python3 -u
 
-# Ergh! This can all be done using deque's rotate() method.
-# TODO: rewrite using deque
-
-class Node:
-    def __init__(self, marble_num, left=None, right=None):
-        # note: I'm unsure how to type hint this function...
-        self.marble = marble_num
-        self.left = left
-        self.right = right
-
-
-def show(start_node, pos) -> None:
-    node = start_node
-    while True:
-        if node == pos:
-            print(f'({node.marble}) ', end='')
-        else:
-            print(f'{node.marble} ', end='')
-        node = node.right
-        if node is start_node:
-            break
-    print()
-
-
-def delete_node(node: Node) -> None:
-    node.left.right = node.right
-    node.right.left = node.left
-    # del node
-
-
-def insert_right(node: Node, marble: int) -> None:
-    new_node = Node(marble)
-    new_node.left = node
-    new_node.right = node.right
-    new_node.right.left = new_node
-    node.right = new_node
-
-
-def validate_doubly_linked_list(start_node: Node) -> bool:
-    node = start_node
-    while True:
-        if node.left.right is not node:
-            print(f'err: {node.marble} left side, {node.left.right.marble=}')
-            return False
-        if node.right.left is not node:
-            print(f'err: {node.marble} right side, {node.right.left.marble=}')
-            return False
-        node = node.right
-        if node is start_node:
-            break
-    return True
+import collections
 
 
 def part1(num_players: int, hi_marble: int) -> int:
-    # start by initializing the first two nodes
-    start_node = Node(0)
-    start_node.left = start_node.right = start_node
-    insert_right(start_node, 1)
-    pos = start_node.right
+    circle = collections.deque([0])
     scores = [0] * (num_players + 1)
-    player = 2
+    player = 1
 
-    for marble in range(2, hi_marble + 1):
+    for marble in range(1, hi_marble + 1):
         if marble % 23 == 0:
-            for _ in range(7):
-                pos = pos.left
-            scores[player] += marble + pos.marble
-            next_node = pos.right
-            delete_node(pos)
-            pos = next_node
+            circle.rotate(7)
+            scores[player] += marble + circle.popleft()
         else:
-            insert_right(pos.right, marble)
-            pos = pos.right.right
+            circle.rotate(-2)
+            circle.appendleft(marble)
 
-        player += 1
-        if player > num_players:
-            player = 1
+        player = player % num_players + 1
 
     return max(scores)
 
