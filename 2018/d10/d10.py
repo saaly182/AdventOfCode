@@ -40,7 +40,7 @@ def showpoints(points: tuple[Point]) -> None:
 def part1(points: tuple[Point]) -> None:
     print('Searching...')
     bb = bounding_box(points)
-    # 200 x 200 is just a practical hueristic upper bound on msg size
+    # 100 x 100 is just a practical hueristic upper bound on msg size
     bbarea_min = min(100 * 100, (bb[2] - bb[0] + 1) * (bb[3] - bb[1] + 1))
     for t in range(20000):
         for p in points:
