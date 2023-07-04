@@ -5,12 +5,18 @@ from typing import DefaultDict
 
 
 def part1(pots: tuple, rules: DefaultDict) -> int:
-    boundary = ('.', '.')
+    boundary = ('.',) * 2
+    max_boundary_dots = ('.',) * 5
     zero_cell = 2
     for generation in range(20):
-        pots = boundary + pots + boundary
-        zero_cell += 2
-        # TODO: possible optimization: trim down to max five dots on either end
+        prefix = pots[:5]
+        suffix = pots[-5:]
+        if prefix != max_boundary_dots:
+            pots = boundary + pots
+            zero_cell += 2
+        if suffix != max_boundary_dots:
+            pots = pots + boundary
+
         pots2 = list(boundary)
         for i in range(2, len(pots) - 2):
             pattern = ''.join(pots[i - 2:i + 3])
