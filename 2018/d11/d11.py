@@ -1,10 +1,12 @@
 #!/usr/bin/python3 -u
 
+import functools
+
 GRIDSIZE = 300
 
 
-def max_subgrid_power(grid: tuple) -> tuple[int, int]:
-    msp = float('-inf')
+def max_subgrid_power_part1(grid: tuple) -> tuple[int, int]:
+    msp = float('-inf')  # max subgrid power
     mspxy = (-1, -1)
     for y in range(1, GRIDSIZE - 1):
         for x in range(1, GRIDSIZE - 1):
@@ -15,6 +17,41 @@ def max_subgrid_power(grid: tuple) -> tuple[int, int]:
                 msp = sp
                 mspxy = (x, y)
     return mspxy
+
+
+def max_subgrid_power_part2(grid: tuple) -> tuple[int, int, int]:
+    """Use recursive inner function to eliminate repeating computations."""
+    @functools.cache
+    def subgrid_power(sx: int, sy: int, ssize: int) -> int:
+        """
+        Dynamic programming approach. Basic idea:
+        X X X Y    Bigger square = X + Y
+        X X X Y
+        X X X Y
+        Y Y Y Y
+        """
+        # base case
+        if ssize == 1:
+            return grid[sy][sx]
+
+        # main case
+        ssp = subgrid_power(sx, sy, ssize - 1)
+        for i in range(ssize - 1):
+            ssp += grid[sy + ssize - 1][sx + i]  # bottom row
+            ssp += grid[sy + i][sx + ssize - 1]  # rightmost col
+        ssp += grid[sy + ssize - 1][sx + ssize - 1]  # bottom-right corner cell
+        return ssp
+
+    msp = float('-inf')  # max subgrid power
+    answer = (-1, -1, -1)
+    for size in range(1, GRIDSIZE + 1):
+        for y in range(1, GRIDSIZE - size + 2):
+            for x in range(1, GRIDSIZE - size + 2):
+                sp = subgrid_power(x, y, size)
+                if sp > msp:
+                    msp = sp
+                    answer = (x, y, size)
+    return answer
 
 
 def cell_power(x: int, y: int, grid_sn: int) -> int:
@@ -52,11 +89,12 @@ def power_levels(grid_sn: int) -> tuple:
 
 def part1(grid_sn: int) -> tuple[int, int]:
     grid = power_levels(grid_sn)
-    return max_subgrid_power(grid)
+    return max_subgrid_power_part1(grid)
 
 
-def part2(grid_sn: int) -> None:
-    return None
+def part2(grid_sn: int) -> tuple[int, int, int]:
+    grid = power_levels(grid_sn)
+    return max_subgrid_power_part2(grid)
 
 
 def slurp(fname: str) -> list[str]:
@@ -65,9 +103,10 @@ def slurp(fname: str) -> list[str]:
 
 
 def main():
-    for grid_sn in (8, 9306):
-        print("Part 1 answer =", part1(grid_sn))
-        print("Part 2 answer =", part2(grid_sn))
+    for grid_sn in (18, 42, 9306):
+        print(f'{grid_sn=}')
+        print("Part 1 answer =", ','.join([str(x) for x in part1(grid_sn)]))
+        print("Part 2 answer =", ','.join([str(x) for x in part2(grid_sn)]))
         print()
 
 
