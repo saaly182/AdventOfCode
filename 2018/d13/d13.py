@@ -63,9 +63,11 @@ class Cart:
 
         # check for crash
         for cart in carts:
-            if self.cid != cart.cid:
+            # note that we only consider uncrashed carts here
+            if self.cid != cart.cid and not cart.crashed:
                 if self.row == cart.row and self.col == cart.col:
                     self.crashed = True
+                    cart.crashed = True
 
 
 def show(tracks: tuple, carts: list) -> None:
@@ -78,12 +80,18 @@ def show(tracks: tuple, carts: list) -> None:
     print()
 
 
-def tick(tracks: tuple, carts: list) -> tuple[int, int] | None:
+def tick(tracks: tuple, carts: list, firstcrash=True) -> tuple[int, int] | None:
     carts.sort(key=lambda c: (c.row, c.col))
     for cart in carts:
         cart.move(tracks, carts)
-        if cart.crashed:
+        if firstcrash and cart.crashed:
             return cart.col, cart.row
+
+    # remove crashed carts
+    crash_indices = [i for i, c in enumerate(carts) if c.crashed]
+    for i in sorted(crash_indices, reverse=True):
+        del carts[i]
+
     return None
 
 
@@ -95,8 +103,12 @@ def part1(tracks: tuple, carts: list) -> str:
             return f'{x},{y}'
 
 
-def part2():
-    return None
+def part2(tracks: tuple, carts: list) -> str:
+    while len(carts) != 1:
+        tick(tracks, carts, firstcrash=False)
+    last_cart = carts[0]
+    x, y = last_cart.col, last_cart.row
+    return f'{x},{y}'
 
 
 def slurp(fname: str) -> list[str]:
@@ -122,12 +134,14 @@ def parse(inp: list) -> tuple[tuple, list]:
 
 def main():
     sample_input = slurp('input/sample_input.txt')
+    sample_input_2 = slurp('input/sample_input_2.txt')
     main_input = slurp('input/input.txt')
 
-    for inp in (sample_input, main_input):
+    for inp in (sample_input_2, main_input):
         tracks, carts = parse(inp)
         print("Part 1 answer =", part1(tracks, carts))
-        print("Part 2 answer =", part2())
+        tracks, carts = parse(inp)  # reparse to reinitiaze the carts
+        print("Part 2 answer =", part2(tracks, carts))
         print()
 
 
