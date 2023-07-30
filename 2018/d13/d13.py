@@ -140,7 +140,7 @@ def main():
     for inp in (sample_input_2, main_input):
         tracks, carts = parse(inp)
         print("Part 1 answer =", part1(tracks, carts))
-        tracks, carts = parse(inp)  # reparse to reinitiaze the carts
+        tracks, carts = parse(inp)  # reparse to reinitialize the carts
         print("Part 2 answer =", part2(tracks, carts))
         print()
 
