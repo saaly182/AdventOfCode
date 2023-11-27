@@ -71,7 +71,7 @@ class Grid:
     def set(self, row: int, col: int, val: str | Unit) -> None:
         self.grid[row][col] = val
 
-    def get(self, row: int, col: int):
+    def get(self, row: int, col: int) -> str | Unit:
         return self.grid[row][col]
 
     def units_in_reading_order(self) -> tuple:
@@ -84,7 +84,7 @@ class Grid:
                     unitlist.append(item)
         return tuple(unitlist)
 
-    def total_hp(self):
+    def total_hp(self) -> int:
         thp = 0
         for row in self.grid:
             for item in row:
@@ -92,6 +92,22 @@ class Grid:
                     assert item.is_alive()
                     thp += item.hp
         return thp
+
+    def set_elf_attack_power(self, eap: int) -> None:
+        for row in self.grid:
+            for item in row:
+                if isinstance(item, Unit) and item.unit_type == 'E':
+                    assert item.is_alive()
+                    item.attack_power = eap
+
+    def elf_count(self) -> int:
+        ec = 0
+        for row in self.grid:
+            for item in row:
+                if isinstance(item, Unit) and item.unit_type == 'E':
+                    assert item.is_alive()
+                    ec += 1
+        return ec
 
 
 def attack(unit: Unit, grid: Grid) -> bool:
@@ -149,9 +165,20 @@ def move(unit: Unit, grid: Grid, targets: tuple) -> None:
             seen[(origin, origin)] = 1
 
     reached = {}
+    found_min_steps = False
+    min_steps = float('inf')
     while bfsq:
         cell, steps, origin = bfsq.popleft()
+
         if cell in dest_cells:
+            # because it's BFS, as soon as we see any steps larger than the min
+            # steps, we can quit searching
+            if not found_min_steps:
+                found_min_steps = True
+                min_steps = steps
+            if found_min_steps and steps > min_steps:
+                break
+
             if cell not in reached:
                 reached[cell] = (steps, origin)
             else:
@@ -226,8 +253,17 @@ def part1(grid: Grid) -> int:
     return battle(grid)
 
 
-def part2():
-    return None
+def part2(inp: list) -> int:
+    elf_attack_power = 3
+    while True:
+        grid = Grid(inp)
+        grid.set_elf_attack_power(elf_attack_power)
+        initial_elf_count = grid.elf_count()
+        outcome = battle(grid)
+        final_elf_count = grid.elf_count()
+        if final_elf_count == initial_elf_count:
+            return outcome
+        elf_attack_power += 1
 
 
 def slurp(fname: str) -> list[str]:
@@ -242,7 +278,7 @@ def main():
     for inp in (sample_input, main_input):
         grid = Grid(inp)
         print("Part 1 answer =", part1(grid))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
