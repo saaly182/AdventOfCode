@@ -139,18 +139,18 @@ def move(unit: Unit, grid: Grid, targets: tuple) -> None:
             if item == '.':
                 dest_cells.add((r, c))
 
+    seen = {}
     bfsq = collections.deque()
     for r, c in neighbor_coords(unit):
         item = grid.get(r, c)
         if item == '.':
             origin = (r, c)
             bfsq.append((origin, 1, origin))
+            seen[(origin, origin)] = 1
 
     reached = {}
-    seen = {}
     while bfsq:
         cell, steps, origin = bfsq.popleft()
-        seen[(cell, origin)] = 1
         if cell in dest_cells:
             if cell not in reached:
                 reached[cell] = (steps, origin)
@@ -165,6 +165,7 @@ def move(unit: Unit, grid: Grid, targets: tuple) -> None:
                 item = grid.get(r, c)
                 if item == '.' and ((r, c), origin) not in seen:
                     bfsq.append(((r, c), steps + 1, origin))
+                    seen[((r, c), origin)] = 1
 
     # Now "reached" contains values that are step counts and the "origin" (or
     # first cell on that path) according to reading-order. So the unit should
@@ -210,12 +211,9 @@ def combat_round(grid: Grid) -> None:
 
 def battle(grid: Grid) -> int:
     """Return the outcome of the battle given the initial grid."""
-    print(grid)
     fulls_rounds = 0
     while True:
         combat_round(grid)
-        print()
-        print(grid)
         if grid.combat_active:
             fulls_rounds += 1
         else:
@@ -241,7 +239,7 @@ def main():
     sample_input = slurp('input/sample_input_3.txt')
     main_input = slurp('input/input.txt')
 
-    for inp in (sample_input, ):
+    for inp in (sample_input, main_input):
         grid = Grid(inp)
         print("Part 1 answer =", part1(grid))
         print("Part 2 answer =", part2())
