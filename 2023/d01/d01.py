@@ -26,12 +26,13 @@ def part2(inp: list[str]) -> int:
     dre_forward = a + b
     dre_reverse = a + b[::-1]
 
+    def as_int(ds: str) -> int:
+        return int(ds) if ds in '123456789' else dnames[ds]
+
     for s in inp:
         ds1 = re.search(dre_forward, s).group()
         ds2 = re.search(dre_reverse, s[::-1]).group()[::-1]
-        d1 = int(ds1) if ds1 in '123456789' else dnames[ds1]
-        d2 = int(ds2) if ds2 in '123456789' else dnames[ds2]
-        calibration = 10 * d1 + d2
+        calibration = 10 * as_int(ds1) + as_int(ds2)
         calsum += calibration
     return calsum
 
