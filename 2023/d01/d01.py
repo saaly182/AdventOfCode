@@ -18,6 +18,9 @@ def part2(inp: list[str]) -> int:
     # Note that digit names can overlap, like "twone" is (2, 1). This means
     # that re.findall() cannot be used, because it only finds non-overlapping
     # matches.
+    #
+    # Also, remember that x[::-1] is a reversed instance of x. We use it
+    # instead of reversed() to avoid dealing with "reversed" objects.
     calsum = 0
     dnames = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
               'seven': 7, 'eight': 8, 'nine': 9}
