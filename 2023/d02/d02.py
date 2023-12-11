@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import math
 import re
 
 
@@ -26,11 +27,16 @@ class Game:
                 return False
         return True
 
+    def mincounts(self) -> dict:
+        mins = {'red': 0, 'green': 0, 'blue': 0}
+        for rev in self.reveals:
+            for color in rev:
+                if rev[color] > mins[color]:
+                    mins[color] = rev[color]
+        return mins
 
-def part1(inp: tuple[str, ...]) -> int:
-    games = []
-    for line in inp:
-        games.append(Game(line))
+
+def part1(games: list) -> int:
     idsum = 0
     for g in games:
         if g.is_possible(12, 13, 14):
@@ -38,8 +44,12 @@ def part1(inp: tuple[str, ...]) -> int:
     return idsum
 
 
-def part2():
-    return None
+def part2(games: list) -> int:
+    powersum = 0
+    for g in games:
+        power = math.prod(g.mincounts().values())
+        powersum += power
+    return powersum
 
 
 def slurp(fname: str) -> tuple[str, ...]:
@@ -52,8 +62,11 @@ def main():
     main_input = slurp('input/input.txt')
 
     for inp in (sample_input, main_input):
-        print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        games = []
+        for line in inp:
+            games.append(Game(line))
+        print("Part 1 answer =", part1(games))
+        print("Part 2 answer =", part2(games))
         print()
 
 
