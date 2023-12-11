@@ -8,7 +8,7 @@ def part2():
     return None
 
 
-def slurp(fname: str) -> tuple[str]:
+def slurp(fname: str) -> tuple[str, ...]:
     with open(fname) as file:
         return tuple(line.rstrip() for line in file.readlines())
 
