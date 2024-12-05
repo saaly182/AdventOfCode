@@ -37,8 +37,23 @@ def part1(grid: tuple) -> int:
     return xmas_count
 
 
-def part2():
-    return None
+def part2(grid: tuple) -> int:
+    xmas_count = 0
+    # Just inspect every interior 'A' for X-MAS
+    r = 1
+    for row in grid[1:-1]:
+        c = 1
+        for letter in row[1:-1]:
+            if letter == 'A':
+                nw = grid[r - 1][c - 1]
+                ne = grid[r - 1][c + 1]
+                se = grid[r + 1][c + 1]
+                sw = grid[r + 1][c - 1]
+                if {nw, ne, se, sw} == {'M', 'S'} and nw != se and ne != sw:
+                    xmas_count += 1
+            c += 1
+        r += 1
+    return xmas_count
 
 
 def slurp(fname: str) -> tuple[str, ...]:
@@ -52,7 +67,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
