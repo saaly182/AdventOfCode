@@ -1,10 +1,12 @@
 #!/usr/bin/python3 -u
 
 import collections
+import functools
 import graphlib
 import re
 
 
+@functools.cache
 def classify_pagelists(rules: tuple, pagelists: tuple) -> tuple:
     """
     Return a tuple of 2-tuples where the 2-tuples are:
@@ -46,7 +48,6 @@ def part1(rules: tuple, pagelists: tuple) -> int:
 
 
 def part2(rules: tuple, pagelists: tuple) -> int:
-    # TODO: refactor to only call classify_pagelists once
     middles_sum = 0
     for pages, br in classify_pagelists(rules, pagelists):
         if not br:
