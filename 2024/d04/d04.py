@@ -15,12 +15,10 @@ directions = (
 def part1(grid: tuple) -> int:
     xmas_count = 0
     # Just inspect every 'X' and check its eight possible XMAS directions
-    r = 0
     rmax = len(grid) - 1
     cmax = len(grid[0]) - 1
-    for row in grid:
-        c = 0
-        for letter in row:
+    for r, row in enumerate(grid):
+        for c, letter in enumerate(row):
             if letter == 'X':
                 for dr, dc in directions:
                     mas = []
@@ -32,18 +30,14 @@ def part1(grid: tuple) -> int:
                         mas.append(grid[_r][_c])
                     if mas == ['M', 'A', 'S']:
                         xmas_count += 1
-            c += 1
-        r += 1
     return xmas_count
 
 
 def part2(grid: tuple) -> int:
     xmas_count = 0
     # Just inspect every interior 'A' for X-MAS
-    r = 1
-    for row in grid[1:-1]:
-        c = 1
-        for letter in row[1:-1]:
+    for r, row in enumerate(grid[1:-1], 1):
+        for c, letter in enumerate(row[1:-1], 1):
             if letter == 'A':
                 nw = grid[r - 1][c - 1]
                 ne = grid[r - 1][c + 1]
@@ -51,8 +45,6 @@ def part2(grid: tuple) -> int:
                 sw = grid[r + 1][c - 1]
                 if {nw, ne, se, sw} == {'M', 'S'} and nw != se and ne != sw:
                     xmas_count += 1
-            c += 1
-        r += 1
     return xmas_count
 
 
