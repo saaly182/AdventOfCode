@@ -27,16 +27,23 @@ class Grid:
         self.r_max = len(self.g) - 1
         self.c_max = len(self.g[0]) - 1
 
-    def do_patrol(self) -> None:
+    def do_patrol(self) -> bool:
+        """Return True if guard exits room, False if guard gets into inf loop"""
+        guard_states_seen = set()
+
         while True:
             # mark current position as visited
             self.g[self.guard_r][self.guard_c] = self.visited
+            gstate = (self.guard_r, self.guard_c, self.guard_d)
+            if gstate in guard_states_seen:
+                return False  # guard is now in an inf loop
+            guard_states_seen.add(gstate)
 
             # process the next step of the guard
             dr, dc = dirutils.dirvecs[self.guard_d]
             next_r, next_c = self.guard_r + dr, self.guard_c + dc
             if not (0 <= next_r <= self.r_max and 0 <= next_c <= self.c_max):
-                break  # guard has left the area
+                return True  # guard has left the area
 
             if self.g[next_r][next_c] == '#':
                 self.guard_d = self.turn_right[self.guard_d]
@@ -57,14 +64,31 @@ class Grid:
                     vc += 1
         return vc
 
+    def empty_squares(self) -> tuple:
+        """Return coords of squares that do not contain an
+        obstacle or the guard"""
+        es = []
+        for r, row in enumerate(self.g):
+            for c, col in enumerate(row):
+                if col not in '#<>^v':
+                    es.append((r, c))
+        return tuple(es)
+
 
 def part1(grid: Grid) -> int:
     grid.do_patrol()
     return grid.visited_count()
 
 
-def part2():
-    return None
+def part2(inp: tuple) -> int:
+    # ... not worried about efficiency at this point
+    loop_count = 0
+    for r, c in Grid(inp).empty_squares():
+        g = Grid(inp)
+        g.g[r][c] = '#'
+        if not g.do_patrol():
+            loop_count += 1
+    return loop_count
 
 
 def slurp(fname: str) -> tuple[str, ...]:
@@ -79,7 +103,7 @@ def main():
     for inp in (sample_input, main_input):
         grid = Grid(inp)
         print("Part 1 answer =", part1(grid))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
