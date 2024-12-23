@@ -3,7 +3,7 @@
 EMPTY_BLOCK = -1
 
 
-def defrag(disk: list) -> None:
+def frag(disk: list) -> None:
     last_used = 0
     while True:
         first_empty = disk.index(EMPTY_BLOCK)
@@ -34,7 +34,7 @@ def show(disk: list) -> None:
 
 
 def part1(disk: list) -> int:
-    defrag(disk)
+    frag(disk)
     return fs_checksum(disk)
 
 
