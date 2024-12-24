@@ -42,8 +42,8 @@ def index_free_slots(disk: tuple, f_start: int, f_size: int) -> tuple:
     diskstr = ''.join(['.' if x == EMPTY_BLOCK else 'F' for x in disk])
     pat = r'\.' * f_size + r'+'
     for mo in re.finditer(pat, diskstr):
-        if mo.start() < f_start:
-            e_start = mo.start()
+        e_start = mo.start()
+        if e_start < f_start:
             e_size = mo.end() - mo.start()
             idx.append((e_start, e_size))
         else:
@@ -55,7 +55,9 @@ def fileinfo(disk: tuple, file_num: int) -> tuple[int, int]:
     diskstr = ''.join(['F' if x == file_num else '*' for x in disk])
     mo = re.search(r'F+', diskstr)
     assert mo
-    return mo.start(), mo.end() - mo.start()
+    f_start = mo.start()
+    f_size = mo.end() - mo.start()
+    return f_start, f_size
 
 
 def part1(disk: list) -> int:
