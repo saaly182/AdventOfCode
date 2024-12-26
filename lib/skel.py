@@ -1,11 +1,11 @@
 #!/usr/bin/python3 -u
 
-def part1():
-    return None
+def part1() -> int:
+    return -99
 
 
-def part2():
-    return None
+def part2() -> int:
+    return -99
 
 
 def slurp(fname: str) -> tuple[str, ...]:
