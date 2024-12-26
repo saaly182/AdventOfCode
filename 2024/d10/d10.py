@@ -5,11 +5,15 @@ sys.path.append('../../lib')
 import dirutils  # noqa
 
 
-def hike(topomap: tuple, rthis: int, cthis: int, r9s: set) -> None:
+def hike(topomap: tuple, rthis: int, cthis: int,
+         r9s: set, rating: list) -> None:
     # DFS - do not have to track "visited" nodes, b/c we can only "climb"
     cur_height = topomap[rthis][cthis]
     if cur_height == 9:
-        r9s.add((rthis, cthis))
+        summit = (rthis, cthis)
+        r9s.add(summit)
+        # every time we reach a 9 it was a unique path to get here
+        rating[0] += 1
         return
 
     for d in 'ESWN':  # east, south, west, north
@@ -23,29 +27,29 @@ def hike(topomap: tuple, rthis: int, cthis: int, r9s: set) -> None:
         except IndexError:
             continue
         if neighbor_height == (cur_height + 1):
-            hike(topomap, rn, cn, r9s)
+            hike(topomap, rn, cn, r9s, rating)
 
     return
 
 
-def score_trailhead(topomap: tuple, rt: int, ct: int) -> int:
+def eval_trailhead(topomap: tuple, rt: int, ct: int) -> tuple[int, int]:
+    """Return score and rating of trailhead."""
     reachable_nines = set()
-    hike(topomap, rt, ct, reachable_nines)
-    return len(reachable_nines)
+    rating = [0]
+    hike(topomap, rt, ct, reachable_nines, rating)
+    return len(reachable_nines), rating[0]
 
 
-def part1(topomap: tuple) -> int:
+def part1(topomap: tuple) -> tuple[int, int]:
     total_score = 0
+    total_rating = 0
     for r, row in enumerate(topomap):
         for c, square in enumerate(row):
             if square == 0:
-                score = score_trailhead(topomap, r, c)
+                score, rating = eval_trailhead(topomap, r, c)
                 total_score += score
-    return total_score
-
-
-def part2():
-    return None
+                total_rating += rating
+    return total_score, total_rating
 
 
 def create_topomap(lines: tuple) -> tuple:
@@ -64,8 +68,9 @@ def main():
 
     for inp in (sample_input, main_input):
         topomap = create_topomap(inp)
-        print("Part 1 answer =", part1(topomap))
-        print("Part 2 answer =", part2())
+        ts, tr = part1(topomap)
+        print(f"Part 1 answer = {ts}")
+        print(f"Part 2 answer = {tr}")
         print()
 
 
