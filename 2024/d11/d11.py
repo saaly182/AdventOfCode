@@ -31,10 +31,7 @@ def blinkstones(stone: int, blink_count: int) -> int:
 
 
 def part1(stones: list, blink_count: int) -> int:
-    final_stone_count = 0
-    for st in stones:
-        final_stone_count += blinkstones(st, blink_count)
-    return final_stone_count
+    return sum([blinkstones(st, blink_count) for st in stones])
 
 
 def slurp(fname: str) -> tuple[str, ...]:
