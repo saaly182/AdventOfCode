@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-import dirutils  # noqa: E402
+import dirutils  # noqa: E402 F401
 
 
 class Grid:

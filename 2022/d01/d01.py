@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-from multiline_record import multiline_file  # noqa: E402
+from multiline_record import multiline_file  # noqa: E402 F401
 
 debug = False
 use_sample = False

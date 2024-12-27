@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('../../lib')
-import dirutils  # noqa
+import dirutils  # noqa: E402 F401
 
 
 def hike(topomap: tuple, rthis: int, cthis: int,

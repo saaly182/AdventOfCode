@@ -5,7 +5,7 @@ import functools
 import re
 import sys
 sys.path.append('../../lib')
-from aocutils import shortest_paths  # noqa: E402
+from aocutils import shortest_paths  # noqa: E402 F401
 
 
 # globals

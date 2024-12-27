@@ -4,8 +4,8 @@ import itertools
 import re
 import sys
 sys.path.append('../../lib')
-import aocutils  # noqa: E402
-import dirutils  # noqa: E402
+import aocutils  # noqa: E402 F401
+import dirutils  # noqa: E402 F401
 
 
 def loc_graph(fullgraph, location):

@@ -5,7 +5,7 @@ from datetime import datetime
 import re
 import sys
 sys.path.append('../../lib')
-from aocutils import merge_intervals  # noqa: E402
+from aocutils import merge_intervals  # noqa: E402 F401
 
 
 def dist(a, b):

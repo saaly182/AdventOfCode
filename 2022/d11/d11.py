@@ -5,7 +5,7 @@ import re
 import textwrap
 import sys
 sys.path.append('../../lib')
-from multiline_record import multiline_data  # noqa: E402
+from multiline_record import multiline_data  # noqa: E402 F401
 
 
 class Monkey():

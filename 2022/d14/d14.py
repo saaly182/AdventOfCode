@@ -3,7 +3,7 @@
 from collections import defaultdict
 import sys
 sys.path.append('../../lib')
-from aocutils import drange  # noqa: E402
+from aocutils import drange  # noqa: E402 F401
 
 
 class Cave1:

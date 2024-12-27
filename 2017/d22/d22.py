@@ -4,7 +4,7 @@ from typing import DefaultDict
 from collections import defaultdict
 import sys
 sys.path.append('../../lib')
-import dirutils  # noqa: E402
+import dirutils  # noqa: E402 F401
 
 CLEAN = '.'
 INFECTED = '#'
