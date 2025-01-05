@@ -43,6 +43,7 @@ class Garden:
 
     @staticmethod
     def region_perimeter(reg: list) -> int:
+        # perimeter is directly related to the # of adjacent sides
         adjcount = 0
         regplots = set(reg)
         for r, c in reg:
@@ -53,21 +54,95 @@ class Garden:
         perimeter = 4 * len(reg) - adjcount
         return perimeter
 
-    def fence_price(self) -> int:
+    @staticmethod
+    def count_corners(nw: bool, ne: bool, se: bool, sw: bool) -> int:
+        plot_count = sum((nw, ne, se, sw))
+        match plot_count:
+            case 0:
+                raise ValueError(f'cannot be all False')
+            case 1:
+                return 1
+            case 2:
+                if (nw and se) or (ne and sw):
+                    return 2
+                else:
+                    return 0
+            case 3:
+                return 1
+            case 4:
+                return 0
+
+    @staticmethod
+    def region_sidecount(reg: list) -> int:
+        # The number of sides is equal to the number of corners
+        # TODO: DRY refactor this
+        cornercount = 0
+        regplots = set(reg)
+        seen_corners = set()  # point-corner assoc. with its NW square
+        for r, c in reg:
+            # this plot is a square; evaluate each of its four corners
+            # and also track corners that have already been evaluated
+            # northwest
+            nw_square = (r - 1, c - 1)
+            if nw_square not in seen_corners:
+                seen_corners.add(nw_square)
+                nw = nw_square in regplots
+                ne = (r - 1, c) in regplots
+                se = (r, c) in regplots
+                sw = (r, c - 1) in regplots
+                cornercount += Garden.count_corners(nw, ne, se, sw)
+            # northeast
+            nw_square = (r - 1, c)
+            if nw_square not in seen_corners:
+                seen_corners.add(nw_square)
+                nw = nw_square in regplots
+                ne = (r - 1, c + 1) in regplots
+                se = (r, c + 1) in regplots
+                sw = (r, c) in regplots
+                cornercount += Garden.count_corners(nw, ne, se, sw)
+            # southeast
+            nw_square = (r, c)
+            if nw_square not in seen_corners:
+                seen_corners.add(nw_square)
+                nw = nw_square in regplots
+                ne = (r, c + 1) in regplots
+                se = (r + 1, c + 1) in regplots
+                sw = (r + 1, c) in regplots
+                cornercount += Garden.count_corners(nw, ne, se, sw)
+            # southwest
+            nw_square = (r, c - 1)
+            if nw_square not in seen_corners:
+                seen_corners.add(nw_square)
+                nw = nw_square in regplots
+                ne = (r, c) in regplots
+                se = (r + 1, c) in regplots
+                sw = (r + 1, c - 1) in regplots
+                cornercount += Garden.count_corners(nw, ne, se, sw)
+        return cornercount
+
+    def fence_price_by_perimeter(self) -> int:
         fp = 0
         for plant in self.regions:
             for reg in self.regions[plant]:
                 fp += self.region_area(reg) * self.region_perimeter(reg)
         return fp
 
+    def fence_price_by_sidecount(self) -> int:
+        fp = 0
+        for plant in self.regions:
+            for reg in self.regions[plant]:
+                fp += self.region_area(reg) * self.region_sidecount(reg)
+        return fp
+
 
 def part1(garden: tuple) -> int:
     g = Garden(garden)
-    return g.fence_price()
+    return g.fence_price_by_perimeter()
 
 
-def part2() -> int:
-    return -99
+def part2(garden: tuple) -> int:
+    g = Garden(garden)
+    return g.fence_price_by_sidecount()
 
 
 def slurp(fname: str) -> tuple[str, ...]:
@@ -81,7 +156,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
