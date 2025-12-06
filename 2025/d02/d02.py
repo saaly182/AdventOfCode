@@ -2,7 +2,7 @@
 
 def is_valid(i: int, chunkcount=None) -> bool:
     # If chunkcount is specified, then just consider that chunkcount.
-    # If chunkcount is None, the consider all possible chunkcounts in turn.
+    # If chunkcount is None, then consider all possible chunkcounts in turn.
 
     s = str(i)
 
@@ -27,7 +27,7 @@ def is_valid(i: int, chunkcount=None) -> bool:
     return True
 
 
-def part1(ranges: tuple, chunkcount=2) -> int:
+def part1(ranges: tuple, chunkcount: int | None = 2) -> int:
     invalids_sum = 0
     for r in ranges:
         for i in range(r[0], r[1] + 1):
