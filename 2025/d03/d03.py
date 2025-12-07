@@ -1,25 +1,40 @@
 #!/usr/bin/python3 -u
 
-def part1(banks: tuple) -> int:
-    total_jolts = 0
+def max_joltage(bank: tuple, n: int) -> int:
+    j = []
+    pos1 = 0
+    pos2 = -n + 1
+    for _ in range(n):
+        if pos2 == 0: pos2 = None
+        x = max(bank[pos1:pos2])
+        j.append(x)
+        pos1 += (bank[pos1:].index(x) + 1)
+        if pos2: pos2 += 1
+    mj = int(''.join([str(x) for x in j]))
+    return mj
+
+
+def total_joltage(banks: tuple, n: int) -> int:
+    tj = 0
     for bank in banks:
-        x1val = max(bank[:-1])
-        x1pos = bank.index(x1val)
-        x2val = max(bank[x1pos + 1:])
-        total_jolts += x1val * 10 + x2val
-    return total_jolts
+        tj += max_joltage(bank, n)
+    return tj
 
 
-def part2() -> int:
-    return -99
+def part1(banks: tuple) -> int:
+    return total_joltage(banks, 2)
+
+
+def part2(banks: tuple) -> int:
+    return total_joltage(banks, 12)
 
 
 def parse_input(fname: str) -> tuple[tuple[int], ...]:
     banks = []
     with open(fname) as file:
         for line in file:
-            j = tuple(int(x) for x in line.rstrip())
-            banks.append(j)
+            jolts = tuple(int(x) for x in line.rstrip())
+            banks.append(jolts)
     return tuple(banks)
 
 
@@ -29,7 +44,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
