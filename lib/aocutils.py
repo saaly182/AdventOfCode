@@ -26,17 +26,16 @@ def merge_intervals(input_intervals):
   Input: an iterable of [a, b] intervals, where a & b are ints and a <= b
   Based on https://www.geeksforgeeks.org/merging-intervals/
   """
-  intervals = copy.deepcopy(input_intervals)  # don't change the input
+  intervals = list(copy.deepcopy(input_intervals))  # don't change the input
   for i in intervals:
     assert len(i) == 2 and (i[0] <= i[1])
   intervals.sort()
-  stack = []
-  stack.append(intervals[0])
+  stack = [list(intervals[0])]
   for i in intervals[1:]:
     if stack[-1][0] <= i[0] <= stack[-1][1]:
       stack[-1][1] = max(stack[-1][1], i[1])
     else:
-      stack.append(i)
+      stack.append(list(i))
   return stack
 
 
@@ -51,7 +50,7 @@ def shortest_paths(G, src):
   G structure: dict with vertex key and value of adjacency list with
   (vertex, edge length) elements.
 
-  reference: http://nmamano.com/blog/dijkstra/dijkstra.html
+  reference: https://nilmamano.com/blog/implementing-dijkstra
   """
   dist = {}
   prev = {}
