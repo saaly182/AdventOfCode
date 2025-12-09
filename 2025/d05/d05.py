@@ -16,8 +16,13 @@ def part1(fresh_ranges: tuple, ingredient_ids: tuple) -> int:
     return len(fresh_ones)
 
 
-def part2() -> int:
-    return -99
+def part2(fresh_ranges: tuple) -> int:
+    # fortunately I had this merge_intervals() fnc in my library
+    merged_ranges = aocutils.merge_intervals(fresh_ranges)
+    fresh_id_count = 0
+    for a, b in merged_ranges:
+        fresh_id_count += (b - a + 1)
+    return fresh_id_count
 
 
 def parse_input(fname: str) -> tuple[tuple, tuple]:
@@ -39,7 +44,7 @@ def main():
 
     for fresh_ranges, ingredient_ids in (sample_input, main_input):
         print("Part 1 answer =", part1(fresh_ranges, ingredient_ids))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(fresh_ranges))
         print()
 
 
