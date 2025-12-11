@@ -76,3 +76,13 @@ def shortest_paths(G, src):
         heapq.heappush(minq, (alt, v))
 
   return dist, prev
+
+
+def rotate_2darray(grid: list, direction='cw') -> tuple:
+  """Return a tuple copy of the input 2d array, rotated 90 degrees."""
+  if direction == 'cw':
+    return tuple(zip(*reversed(grid)))
+  elif direction == 'ccw':
+    return tuple(zip(*[reversed(row) for row in grid]))
+  else:
+    raise ValueError('Direction must be cw or ccw')

@@ -50,5 +50,25 @@ class TestShortestPaths(unittest.TestCase):
     self.assertEqual(prev, {'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'E'})
 
 
+class TestRotate2dArray(unittest.TestCase):
+  def test_rotate_2darray(self):
+    arr = [[1, 2, 3],
+           [4, 5, 6],
+           [7, 8, 9],
+           [0, 0, 0]]
+
+    arr_cw = rotate_2darray(arr)
+    expected = ((0, 7, 4, 1),
+                (0, 8, 5, 2),
+                (0, 9, 6, 3))
+    self.assertEqual(arr_cw, expected)
+
+    arr_ccw = rotate_2darray(arr, 'ccw')
+    expected = ((3, 6, 9, 0),
+                (2, 5, 8, 0),
+                (1, 4, 7, 0))
+    assert arr_ccw == expected
+
+
 if __name__ == "__main__":
   unittest.main()
