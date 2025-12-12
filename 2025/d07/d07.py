@@ -1,5 +1,7 @@
 #!/usr/bin/python3 -u
 
+import functools
+
 BEAM = '|'
 SPLITTER = '^'
 EMPTY = '.'
@@ -33,8 +35,60 @@ def part1(grid: tuple) -> int:
     return splitcount
 
 
-def part2() -> int:
-    return -99
+def lol2tot(lst: list) -> tuple:
+    """Return a tuple-of-tuples given a list-of-lists."""
+    return tuple(tuple(r) for r in lst)
+
+
+@functools.cache
+def travel_manifold(grid: tuple, depth: int) -> int:
+    # recursive and memoized; note that all the flipping between lists and
+    # tuples is required because functools.cache requires the fnc args to be
+    # hashable.
+
+    if depth == len(grid) - 1:
+        return 1
+
+    pathcount = 0
+    g = [list(r) for r in grid]
+    tp = g[depth - 1].index(BEAM)  # tachyon position
+    c = g[depth][tp]
+    # ugly code; basically move the beam down one level, call the recursion,
+    # and then restore the previous state. this is required to get memoized
+    # results.
+    if c == EMPTY:
+        g[depth - 1][tp] = EMPTY
+        g[depth][tp] = BEAM
+        pathcount += travel_manifold(lol2tot(g), depth + 1)
+        g[depth - 1][tp] = BEAM
+        g[depth][tp] = EMPTY
+    elif c == SPLITTER:
+        # left case
+        c_left = g[depth][tp - 1]
+        g[depth - 1][tp] = EMPTY
+        g[depth][tp - 1] = BEAM
+        pathcount += travel_manifold(lol2tot(g), depth + 1)
+        g[depth - 1][tp] = BEAM
+        g[depth][tp - 1] = c_left
+        # right case
+        c_right = g[depth][tp + 1]
+        g[depth - 1][tp] = EMPTY
+        g[depth][tp + 1] = BEAM
+        pathcount += travel_manifold(lol2tot(g), depth + 1)
+        g[depth - 1][tp] = BEAM
+        g[depth][tp + 1] = c_right
+    else:
+        raise ValueError(f'Invalid character {c}')
+
+    return pathcount
+
+
+def part2(grid: tuple) -> int:
+    g = [list(r) for r in grid]
+    s = g[0].index('S')
+    g[1][s] = BEAM
+
+    return travel_manifold(lol2tot(g), 2)
 
 
 def parse_input(fname: str) -> tuple[tuple, ...]:
@@ -48,7 +102,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
