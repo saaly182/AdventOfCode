@@ -49,7 +49,6 @@ def travel_manifold(grid: tuple, depth: int) -> int:
     if depth == len(grid) - 1:
         return 1
 
-    pathcount = 0
     g = [list(r) for r in grid]
     tp = g[depth - 1].index(BEAM)  # tachyon position
     c = g[depth][tp]
@@ -59,7 +58,7 @@ def travel_manifold(grid: tuple, depth: int) -> int:
     if c == EMPTY:
         g[depth - 1][tp] = EMPTY
         g[depth][tp] = BEAM
-        pathcount += travel_manifold(lol2tot(g), depth + 1)
+        pathcount = travel_manifold(lol2tot(g), depth + 1)
         g[depth - 1][tp] = BEAM
         g[depth][tp] = EMPTY
     elif c == SPLITTER:
@@ -67,7 +66,7 @@ def travel_manifold(grid: tuple, depth: int) -> int:
         c_left = g[depth][tp - 1]
         g[depth - 1][tp] = EMPTY
         g[depth][tp - 1] = BEAM
-        pathcount += travel_manifold(lol2tot(g), depth + 1)
+        pathcount = travel_manifold(lol2tot(g), depth + 1)
         g[depth - 1][tp] = BEAM
         g[depth][tp - 1] = c_left
         # right case
