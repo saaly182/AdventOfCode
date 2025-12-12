@@ -59,7 +59,7 @@ def parse_input2(fname: str) -> tuple:
     with open(fname) as file:
         for line in file:
             line = line.rstrip('\n')
-            chrs = [c for c in line]
+            chrs = list(line)
             sheet.append(chrs)
     sheet_ccw = aocutils.rotate_2darray(sheet, 'ccw')
     return tuple(sheet_ccw)
