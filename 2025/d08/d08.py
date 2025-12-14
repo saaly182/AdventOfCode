@@ -10,6 +10,11 @@ class Graph:
         self.vertices = set(points)
         self.edges = set()
         self.dist2pairs = self._compute_dists()
+        self._connected_components = {v: {v} for v in self.vertices}
+
+    def connected_components(self) -> tuple:
+        return tuple(set([frozenset(cc) for cc
+                          in self._connected_components.values()]))
 
     def _compute_dists(self) -> collections.defaultdict:
         d2 = collections.defaultdict(list)
@@ -27,24 +32,14 @@ class Graph:
         if v2 not in self.vertices:
             raise ValueError(f'{v2} not in graph')
         self.edges.add((v1, v2))
-
-    def connected_components(self) -> tuple:
-        # Possible improvement: keeps ccs updated as each edge is added
-        # instead of recomputing for each call
-        ccs = collections.defaultdict(set)
-
-        for v in self.vertices:
-            ccs[v].add(v)
-
-        # brute force
-        for v1, v2 in self.edges:
+        # update connected components now that we've added an edge
+        ccs = self._connected_components
+        if v1 not in ccs[v2]:  # only process if these are not already together
             for v in ccs:
                 if v1 in ccs[v]:
                     ccs[v].update(ccs[v2])
                 if v2 in ccs[v]:
                     ccs[v].update(ccs[v1])
-
-        return tuple(set([tuple(sorted(cc)) for cc in ccs.values()]))
 
 
 def part1(points: tuple) -> int:
@@ -66,8 +61,22 @@ def part1(points: tuple) -> int:
     return math.prod(circuit_lengths[-3:])
 
 
-def part2() -> int:
-    return -99
+def part2(points: tuple) -> int:
+    g = Graph(points)
+    final_xa = final_xb = 0
+    done = False
+    for d2 in sorted(g.dist2pairs):
+        for a, b in g.dist2pairs[d2]:
+            g.add_edge(a, b)
+            nccs = len(g.connected_components())
+            if nccs == 1:
+                final_xa, final_xb = a[0], b[0]
+                done = True
+                break
+        if done:
+            break
+
+    return final_xa * final_xb
 
 
 def parse_input(fname: str) -> tuple[tuple, ...]:
@@ -83,7 +92,7 @@ def main():
 
     for inp in (sample_input, main_input):
         print("Part 1 answer =", part1(inp))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(inp))
         print()
 
 
