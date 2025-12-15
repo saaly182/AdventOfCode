@@ -10,11 +10,8 @@ class Graph:
         self.vertices = set(points)
         self.edges = set()
         self.dist2pairs = self._compute_dists()
-        self._connected_components = {v: {v} for v in self.vertices}
-
-    def connected_components(self) -> tuple:
-        return tuple(set([frozenset(cc) for cc
-                          in self._connected_components.values()]))
+        self._connected_components = {
+            i: {v} for i, v in enumerate(self.vertices)}
 
     def _compute_dists(self) -> collections.defaultdict:
         d2 = collections.defaultdict(list)
@@ -25,6 +22,16 @@ class Graph:
             d2[d_squared].append((a, b))
         return d2
 
+    def _find_component(self, v: tuple) -> int:
+        # every vertex is in one and only one component at a time
+        for c_id in self._connected_components:
+            if v in self._connected_components[c_id]:
+                return c_id
+        raise ValueError(f'{v} not in graph')
+
+    def connected_components(self) -> tuple:
+        return tuple(self._connected_components.values())
+
     def add_edge(self, v1: tuple[int, int, int],
                  v2: tuple[int, int, int]) -> None:
         if v1 not in self.vertices:
@@ -33,13 +40,11 @@ class Graph:
             raise ValueError(f'{v2} not in graph')
         self.edges.add((v1, v2))
         # update connected components now that we've added an edge
-        ccs = self._connected_components
-        if v1 not in ccs[v2]:  # only process if these are not already together
-            for v in ccs:
-                if v1 in ccs[v]:
-                    ccs[v].update(ccs[v2])
-                if v2 in ccs[v]:
-                    ccs[v].update(ccs[v1])
+        c1 = self._find_component(v1)
+        c2 = self._find_component(v2)
+        if c1 != c2:
+            self._connected_components[c1] |= self._connected_components[c2]
+            del self._connected_components[c2]
 
 
 def part1(points: tuple) -> int:
