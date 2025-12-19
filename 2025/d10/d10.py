@@ -1,26 +1,14 @@
 #!/usr/bin/python3 -u
 
 import collections
+import dataclasses
 
 
+@dataclasses.dataclass
 class Machine:
-    def __init__(self, spec: dict) -> None:
-        self.spec = spec
-        self.light_diagram = spec['light_diagram']
-        self.buttons = spec['buttons']
-        self.jolts = spec['jolts']
-        self.lights = [False] * len(self.light_diagram)
-
-    def is_startable(self) -> bool:
-        return self.light_diagram == tuple(self.lights)
-
-    def push_button(self, button: tuple[int, ...]) -> None:
-        # Note that pushing a sequence of buttons and then pushing that sequence
-        # in reverse returns the lights to the same state.
-        if button not in self.buttons:
-            raise ValueError(f'Invalid button: {button}')
-        for pos in button:
-            self.lights[pos] = not self.lights[pos]
+    light_diagram: tuple
+    buttons: frozenset
+    jolts: tuple
 
 
 def min_start_pushes(m: Machine) -> int:
@@ -29,10 +17,10 @@ def min_start_pushes(m: Machine) -> int:
     parent = {}
     final_step = None
 
-    for b in m.buttons:
-        k = (b, starting_lights)
-        parent[k] = None
-        q.append(k)
+    for b1 in m.buttons:
+        k1 = (b1, starting_lights)
+        parent[k1] = None
+        q.append(k1)
 
     def bfs():
         nonlocal final_step
@@ -46,11 +34,11 @@ def min_start_pushes(m: Machine) -> int:
             if lights2 == m.light_diagram:
                 final_step = (button1, lights1)
                 return
-            for b in m.buttons:
-                k = (b, lights2)
-                if k not in parent:
-                    parent[k] = (button1, lights1)
-                    q.append(k)
+            for b2 in m.buttons:
+                k2 = (b2, lights2)
+                if k2 not in parent:
+                    parent[k2] = (button1, lights1)
+                    q.append(k2)
 
     bfs()
 
@@ -99,10 +87,9 @@ def parse_input(fname: str) -> tuple[Machine, ...]:
                     jolts = tuple([int(x) for x in tok[1:-1].split(',')])
                 else:
                     raise ValueError(f'Invalid input: {line}')
-            spec = {'light_diagram': light_diagram,
-                    'buttons': frozenset(buttons),
-                    'jolts': jolts}
-            mlist.append(Machine(spec))
+            mlist.append(Machine(light_diagram=light_diagram,
+                                 buttons=frozenset(buttons),
+                                 jolts=jolts))
     return tuple(mlist)
 
 
