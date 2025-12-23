@@ -29,6 +29,7 @@ class TestMergeIntervals(unittest.TestCase):
 
 class TestShortestPaths(unittest.TestCase):
   def test_shortest_paths(self):
+    # undirected (all reverse directions exist and have the same weight)
     G = {
         'a': (('b', 1),),
         'b': (('a', 1),),
@@ -37,6 +38,7 @@ class TestShortestPaths(unittest.TestCase):
     self.assertEqual(dist, {'a': 0, 'b': 1})
     self.assertEqual(prev, {'b': 'a'})
 
+    # undirected (all reverse directions exist and have the same weight)
     G = {
         'A': [('B', 1), ('C', 5)],
         'B': [('A', 1), ('D', 3)],
@@ -48,6 +50,16 @@ class TestShortestPaths(unittest.TestCase):
     dist, prev = shortest_paths(G, 'A')
     self.assertEqual(dist, {'A': 0, 'B': 1, 'C': 5, 'D': 4, 'E': 12, 'F': 20})
     self.assertEqual(prev, {'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'E'})
+
+    # directed
+    G = {
+        'a': (('b', 1),),
+        'b': (('c', 1),),
+    }
+    dist, prev = shortest_paths(G, 'a')
+    self.assertEqual(dist, {'a': 0, 'b': 1, 'c': 2})
+    self.assertEqual(prev, {'b': 'a', 'c': 'b'})
+
 
 
 class TestRotate2dArray(unittest.TestCase):

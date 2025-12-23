@@ -3,6 +3,7 @@
 Various utility functions for AoC
 """
 
+import collections
 import copy
 import heapq
 
@@ -52,13 +53,10 @@ def shortest_paths(G, src):
 
   reference: https://nilmamano.com/blog/implementing-dijkstra
   """
-  dist = {}
+  dist = collections.defaultdict(lambda: float('inf'))
+  seen = collections.defaultdict(bool)
   prev = {}
-  seen = {}
   minq = []
-  for v in G:
-    dist[v] = float('inf')
-    seen[v] = False
   dist[src] = 0
   heapq.heappush(minq, (0, src))
 
@@ -73,7 +71,8 @@ def shortest_paths(G, src):
       if alt < dist[v]:
         dist[v] = alt
         prev[v] = u
-        heapq.heappush(minq, (alt, v))
+        if v in G:
+          heapq.heappush(minq, (alt, v))
 
   return dist, prev
 
