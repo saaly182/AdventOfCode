@@ -40,7 +40,7 @@ def merge_intervals(input_intervals):
     return stack
 
 
-def shortest_paths(G, src):
+def shortest_paths(g, src):
     """
     Return distance and path info from src to all other vertices in the graph.
 
@@ -66,15 +66,52 @@ def shortest_paths(G, src):
             continue  # already seen this vertex
         seen[u] = True
 
-        for v, e in G[u]:
+        for v, e in g[u]:
             alt = dist[u] + e
             if alt < dist[v]:
                 dist[v] = alt
                 prev[v] = u
-                if v in G:
+                if v in g:
                     heapq.heappush(minq, (alt, v))
 
     return dist, prev
+
+
+def topo_sort(g: dict) -> list:
+    """
+    Return a topological sorted list of vertices in the graph.
+    Raises ValueError if the input is not a well-formed DAG.
+
+    G structure: dict with vertex key and value of adjacency list with
+    (vertex, edge length) elements.
+
+    reference:
+    https://en.wikipedia.org/wiki/Topological_sorting#Kahn%27s_algorithm
+    """
+    tsort = []
+    indegree = collections.defaultdict(int)
+
+    # compute indegree
+    for u in g:
+        if u not in indegree:
+            indegree[u] = 0
+        for v, e in g[u]:
+            indegree[v] += 1
+
+    no_incoming = {u for u in indegree if indegree[u] == 0}
+    while no_incoming:
+        u = no_incoming.pop()
+        tsort.append(u)
+        if u in g:
+            for v, e in g[u]:
+                indegree[v] -= 1
+                if indegree[v] == 0:
+                    no_incoming.add(v)
+
+    if any(indegree[u] != 0 for u in g):
+        raise ValueError('Input is not a well-formed DAG')
+
+    return tsort
 
 
 def rotate_2darray(grid: list, direction='cw') -> tuple:

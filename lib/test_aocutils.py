@@ -30,16 +30,16 @@ class TestMergeIntervals(unittest.TestCase):
 class TestShortestPaths(unittest.TestCase):
     def test_shortest_paths(self):
         # undirected (all reverse directions exist and have the same weight)
-        G = {
+        g = {
             'a': (('b', 1),),
             'b': (('a', 1),),
         }
-        dist, prev = shortest_paths(G, 'a')
+        dist, prev = shortest_paths(g, 'a')
         self.assertEqual(dist, {'a': 0, 'b': 1})
         self.assertEqual(prev, {'b': 'a'})
 
         # undirected (all reverse directions exist and have the same weight)
-        G = {
+        g = {
             'A': [('B', 1), ('C', 5)],
             'B': [('A', 1), ('D', 3)],
             'C': [('A', 5), ('D', 2), ('E', 7)],
@@ -47,20 +47,43 @@ class TestShortestPaths(unittest.TestCase):
             'E': [('C', 7), ('F', 8)],
             'F': [('E', 8)],
         }
-        dist, prev = shortest_paths(G, 'A')
+        dist, prev = shortest_paths(g, 'A')
         self.assertEqual(dist,
                          {'A': 0, 'B': 1, 'C': 5, 'D': 4, 'E': 12, 'F': 20})
         self.assertEqual(prev,
                          {'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'E'})
 
         # directed
-        G = {
+        g = {
             'a': (('b', 1),),
             'b': (('c', 1),),
         }
-        dist, prev = shortest_paths(G, 'a')
+        dist, prev = shortest_paths(g, 'a')
         self.assertEqual(dist, {'a': 0, 'b': 1, 'c': 2})
         self.assertEqual(prev, {'b': 'a', 'c': 'b'})
+
+
+class TestTopoSort(unittest.TestCase):
+    def test_topo_sort(self):
+        g = {
+            'a': (('b', 1),),
+            'b': (('c', 1),),
+            'c': (('d', 1),),
+            'd': (('e', 1),),
+        }
+        ts_actual = topo_sort(g)
+        ts_expected = ['a', 'b', 'c', 'd', 'e']
+        self.assertEqual(ts_expected, ts_actual)
+
+    def test_topo_sort_not_dag(self):
+        g = {
+            'a': (('b', 1),),
+            'b': (('c', 1),),
+            'c': (('d', 1),),
+            'd': (('e', 1), ('b', 1)),  # loops back to 'b' so not a DAG
+        }
+        with self.assertRaises(ValueError):
+            _ = topo_sort(g)
 
 
 class TestRotate2dArray(unittest.TestCase):
@@ -80,7 +103,7 @@ class TestRotate2dArray(unittest.TestCase):
         expected = ((3, 6, 9, 0),
                     (2, 5, 8, 0),
                     (1, 4, 7, 0))
-        assert arr_ccw == expected
+        self.assertEqual(arr_ccw, expected)
 
 
 if __name__ == "__main__":
