@@ -4,6 +4,7 @@ Libary to process input as blank-line-separated multiline records.
 """
 
 from multiline_record import *
+import pathlib
 import unittest
 
 

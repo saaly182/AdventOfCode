@@ -3,8 +3,6 @@
 Libary to process input as blank-line-separated multiline records.
 """
 
-import pathlib
-
 
 def multiline_file(filename):
     """
@@ -13,17 +11,17 @@ def multiline_file(filename):
     intact, and treat all blank lines as non-records.
     """
     with open(filename, 'r') as f:
-        # R is the multiline record
-        R = ''
+        # r is the multiline record
+        r = ''
         for line in f:
             if line == '\n':
-                if R:
-                    yield R
-                    R = ''
+                if r:
+                    yield r
+                    r = ''
             else:
-                R += line
-        if R:
-            yield R
+                r += line
+        if r:
+            yield r
 
 
 def multiline_data(iterable):
@@ -32,13 +30,13 @@ def multiline_data(iterable):
     record separator. Return each record as a tuple of strings,
     and treat all blank lines as non-records.
     """
-    R = []
+    r = []
     for x in iterable:
         if x.strip() == '':
-            if R:
-                yield tuple(R)
-                R = []
+            if r:
+                yield tuple(r)
+                r = []
         else:
-            R.append(x)
-    if R:
-        yield tuple(R)
+            r.append(x)
+    if r:
+        yield tuple(r)
