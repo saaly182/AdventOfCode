@@ -12,17 +12,7 @@ class Machine:
 
 
 def min_start_pushes(m: Machine) -> int:
-    q = collections.deque()
-    starting_lights = tuple([False] * len(m.light_diagram))
-    parent = {}
-    final_step = None
-
-    for b1 in m.buttons:
-        k1 = (b1, starting_lights)
-        parent[k1] = None
-        q.append(k1)
-
-    def bfs():
+    def bfs():  # inner function
         nonlocal final_step
         while q:
             button1, lights1 = q.popleft()
@@ -39,6 +29,16 @@ def min_start_pushes(m: Machine) -> int:
                 if k2 not in parent:
                     parent[k2] = (button1, lights1)
                     q.append(k2)
+
+    q = collections.deque()
+    starting_lights = tuple([False] * len(m.light_diagram))
+    parent = {}
+    final_step = None
+
+    for b1 in m.buttons:
+        k1 = (b1, starting_lights)
+        parent[k1] = None
+        q.append(k1)
 
     bfs()
 
