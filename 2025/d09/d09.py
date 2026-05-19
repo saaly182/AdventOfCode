@@ -119,26 +119,8 @@ def compressed_grid(cells: tuple) -> list:
     return [cgrid, c2r_map, r2c_map]
 
 
-def valid_rectangles(cgrid: list, r2c_map: dict) -> tuple:
-    """Return all valid rectangles in the compressed grid.
-
-    Valid rectangles are between to red cells, with all enclosed cells being
-    red or green.
-    """
-    valid_rects = []
-    for c1, c2 in itertools.combinations(r2c_map.keys(), 2):
-        x1, y1 = c1
-        x2, y2 = c2
-        valid = True
-        for y in drange(y1, y2):
-            for x in drange(x1, x2):
-                if cgrid[y][x] not in ('#', 'X'):
-                    valid = False
-                    break
-        if valid:
-            valid_rects.append((c1, c2))
-
-    return tuple(valid_rects)
+def rect_area(x1: int, y1: int, x2: int, y2: int) -> int:
+    return (abs(x2 - x1) + 1) * (abs(y2 - y1) + 1)
 
 
 def part2(cells: tuple) -> int:
@@ -154,12 +136,25 @@ def part2(cells: tuple) -> int:
     cgrid, c2r_map, r2c_map = compressed_grid(cells)
 
     max_area = 0
-    for c1, c2 in valid_rectangles(cgrid, c2r_map):
-        # convert back to uncompressed space to check rect areas
+
+    for c1, c2 in itertools.combinations(c2r_map, 2):
+        xc1, yc1 = c1
+        xc2, yc2 = c2
         x1, y1 = c2r_map[c1]
         x2, y2 = c2r_map[c2]
-        area = (abs(x2 - x1) + 1) * (abs(y2 - y1) + 1)
-        if area > max_area:
+        area = rect_area(x1, y1, x2, y2)
+        if area <= max_area:
+            continue
+
+        # check that all enclosed cells are red or green
+        valid_rect = True
+        for yc in drange(yc1, yc2):
+            for xc in drange(xc1, xc2):
+                if cgrid[yc][xc] == '.':
+                    valid_rect = False
+                    break
+
+        if valid_rect:
             max_area = area
 
     return max_area
