@@ -1,5 +1,8 @@
 #!/usr/bin/python3 -u
 
+# TODO: The current Part 2 BFS solution in this version blows up.
+# The internet says to switch to a linear algebra approach.
+
 import collections
 import dataclasses
 
