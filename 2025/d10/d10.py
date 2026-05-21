@@ -1,16 +1,14 @@
 #!/usr/bin/python3 -u
 
-# TODO: The current Part 2 BFS solution in this version blows up.
-# The internet says to switch to a linear algebra approach.
-
 import collections
 import dataclasses
+import z3
 
 
 @dataclasses.dataclass
 class Machine:
     light_diagram: tuple
-    buttons: frozenset
+    buttons: tuple
     jolts: tuple
 
 
@@ -60,58 +58,33 @@ def min_start_pushes_lights(m: Machine) -> int:
 
 
 def min_start_pushes_jolts(m: Machine) -> int:
-    def bfs():  # inner function
-        nonlocal final_step
-        while q:
-            button1, jolts1 = q.popleft()
-            jolts_next = list(jolts1)
-            for pos in button1:
-                jolts_next[pos] += 1
-            jolts2 = tuple(jolts_next)
+    """Use Z3 solver to find optimal buttons presses for each machine."""
+    # We need a full "A" matrix of button press effects, because we're solving
+    # Ax = b where A is the button matrix, x is the button-presses vector, and
+    # b is the jolts requirements vector.
+    A = [[0] * len(m.buttons) for _ in range(len(m.jolts))]
+    for i, b in enumerate(m.buttons):
+        for jolt_adder in b:
+            A[jolt_adder][i] = 1
 
-            if jolts2 == m.jolts:
-                final_step = (button1, jolts1)
-                return
+    # Create presses and constrain them to be non-negative
+    opt = z3.Optimize()
+    presses = [z3.Int(f'b{i}') for i in range(len(m.buttons))]
+    for p in presses:
+        opt.add(p >= 0)
 
-            # stop exploring this path if any jolt is now too large
-            jolts_ok = True
-            for i in range(len(m.jolts)):
-                if jolts2[i] > m.jolts[i]:
-                    jolts_ok = False
-                    break
-            if not jolts_ok:
-                continue
+    # Add the Ax=b constraints
+    for i, jolt_req in enumerate(m.jolts):
+        jolt_act = sum(presses[k] * A[i][k] for k in range(len(presses)))
+        opt.add(jolt_act == jolt_req)
 
-            for b2 in m.buttons:
-                k2 = (b2, jolts2)
-                if k2 not in parent:
-                    parent[k2] = (button1, jolts1)
-                    q.append(k2)
+    # Find the min number of presses
+    total_presses = sum(presses)
+    opt.minimize(total_presses)
+    if opt.check() != z3.sat:
+        raise ValueError(f'Cannot solve jolts requirements for {m=}')
 
-    q = collections.deque()
-    starting_jolts = tuple([0] * len(m.jolts))
-    parent = {}
-    final_step = None
-
-    for b1 in m.buttons:
-        k1 = (b1, starting_jolts)
-        parent[k1] = None
-        q.append(k1)
-
-    bfs()
-
-    # now reconstruct the button sequence
-    bseq = []
-    step = final_step
-    while True:
-        if step is None:
-            break
-        bu, li = step
-        bseq.append(bu)
-        step = parent[step]
-    bseq.reverse()
-
-    return len(bseq)
+    return sum([opt.model()[p].as_long() for p in presses])
 
 
 def part1(machines) -> int:
@@ -149,7 +122,7 @@ def parse_input(fname: str) -> tuple[Machine, ...]:
                 else:
                     raise ValueError(f'Invalid input: {line}')
             mlist.append(Machine(light_diagram=light_diagram,
-                                 buttons=frozenset(buttons),
+                                 buttons=tuple(buttons),
                                  jolts=jolts))
     return tuple(mlist)
 
