@@ -11,6 +11,8 @@ class Device:
         self.regcount = 4
         self.registers = [0] * self.regcount
         self.opnames = tuple(n for n in dir(self) if n.startswith('op_'))
+        self.opname2code = {n: None for n in self.opnames}
+        self.code2opname = {c: None for c in range(16)}
 
     def set_registers(self, registers: list) -> None:
         assert len(registers) == self.regcount
@@ -137,8 +139,42 @@ def part1(samples: tuple) -> int:
     return found3plus
 
 
-def part2() -> int:
-    return -99
+def part2(samples: tuple, test_program: tuple) -> int:
+    d = Device()
+
+    # This is the rare case where we don't have a given sample input for part 2,
+    # so just return a dummy value if we detect this is the sample input.
+    if len(samples) < 15:
+        return -99
+
+    # Determine the mappings of op names to op codes. This assumes the input
+    # data truly leads to a unique mapping.
+    while None in d.opname2code.values():
+        for before, instruction, after in samples:
+            op_success = 0
+            last_opname = None
+            for op in d.opnames:
+                fnc = getattr(d, op)
+                d.set_registers(list(before))
+                fnc(instruction)
+                if d.cmp_registers(list(after)):
+                    if d.opname2code[op] is None:
+                        op_success += 1
+                        last_opname = op
+
+            if op_success == 1:
+                d.opname2code[last_opname] = instruction[0]
+                d.code2opname[instruction[0]] = last_opname
+
+    # Run the given program
+    d.set_registers([0, 0, 0, 0])
+    for instruction in test_program:
+        opname = d.code2opname[instruction[0]]
+        fnc = getattr(d, opname)
+        fnc(instruction)
+    reg0 = d.registers[0]
+
+    return reg0
 
 
 def parse_input(fname: str) -> tuple[tuple, tuple]:
@@ -173,7 +209,7 @@ def main():
 
     for samples, test_program in (sample_input, main_input):
         print("Part 1 answer =", part1(samples))
-        print("Part 2 answer =", part2())
+        print("Part 2 answer =", part2(samples, test_program))
         print()
 
 
