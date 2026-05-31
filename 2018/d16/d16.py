@@ -12,7 +12,7 @@ class Device:
         self.registers = [0] * self.regcount
         self.opnames = tuple(n for n in dir(self) if n.startswith('op_'))
         self.opname2code = {n: None for n in self.opnames}
-        self.code2opname = {c: None for c in range(16)}
+        self.code2opname = {}
 
     def set_registers(self, registers: list) -> None:
         assert len(registers) == self.regcount
@@ -151,20 +151,19 @@ def part2(samples: tuple, test_program: tuple) -> int:
     # data truly leads to a unique mapping.
     while None in d.opname2code.values():
         for before, instruction, after in samples:
-            op_success = 0
-            last_opname = None
+            success_ops = []
             for op in d.opnames:
                 fnc = getattr(d, op)
                 d.set_registers(list(before))
                 fnc(instruction)
                 if d.cmp_registers(list(after)):
                     if d.opname2code[op] is None:
-                        op_success += 1
-                        last_opname = op
+                        success_ops.append(op)
 
-            if op_success == 1:
-                d.opname2code[last_opname] = instruction[0]
-                d.code2opname[instruction[0]] = last_opname
+            if len(success_ops) == 1:
+                found_op = success_ops[0]
+                d.opname2code[found_op] = instruction[0]
+                d.code2opname[instruction[0]] = found_op
 
     # Run the given program
     d.set_registers([0, 0, 0, 0])
