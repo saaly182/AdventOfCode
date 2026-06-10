@@ -223,7 +223,6 @@ LHALT
     e = 0
     b = e | 65536
     e = 678134
-
     while True:
         f = b & 255
         e = e + f
@@ -238,7 +237,38 @@ LHALT
 
 
 def part2(ipreg: int, program: tuple) -> int:
-    return -99
+    """
+    The outer while loop state is only dependent on `e`, so once we see
+    a repeated value of `e` we'll be in an infinite loop. So we want the `e`
+    value that occurs immediately before the first repeat value.
+
+    Note that the logic here is guaranteed to terminate because e is bounded
+    by the "e = e & 16777215" lines. An eventual repeat of e is guaranteed by
+    the pigeonhole principle.
+    """
+    a = 0
+    b = c = e = f = 0
+    seen = set()
+    repeat_found = False
+    answer = -99
+    while not repeat_found:
+        b = e | 65536  # 2**16
+        e = 678134
+        while True:
+            f = b & 255
+            e = e + f
+            e = e & 16777215
+            e = e * 65899
+            e = e & 16777215  # 2**24 - 1
+            if b < 256:
+                if e in seen:
+                    repeat_found = True
+                else:
+                    answer = e  # continuously track the previous `e`
+                seen.add(e)
+                break
+            b //= 256
+    return answer
 
 
 def parse_input(fname: str) -> tuple[int, tuple]:
