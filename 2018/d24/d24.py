@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 
+import copy
 import re
 
 
@@ -102,7 +103,7 @@ class Army:
                 d = g.inflicted_damage(eg)
                 ep = eg.effective_power()
                 init = eg.initiative
-                if (d, ep, init) > (maxd, maxep, maxinit):
+                if d != 0 and (d, ep, init) > (maxd, maxep, maxinit):
                     maxi = i
                     maxd = d
                     maxep = ep
@@ -110,6 +111,16 @@ class Army:
             if maxi >= 0:
                 g.target = available_targets[maxi]
                 del available_targets[maxi]
+
+    def apply_boost(self, boost: int) -> None:
+        for g in self.groups:
+            g.attack_damage += boost
+
+
+def clone_armies(inf: Army, imm: Army) -> tuple[Army, Army]:
+    """Deep-copy both armies together so their .enemy
+    cross-links stay intact."""
+    return copy.deepcopy((inf, imm))
 
 
 def battle(inf: Army, imm: Army) -> None:
@@ -161,8 +172,16 @@ def part1(inf: Army, imm: Army) -> int:
     return result
 
 
-def part2() -> int:
-    return -99
+def part2(inf: Army, imm: Army) -> int:
+    boost = 0
+    while True:
+        inf_cpy, imm_cpy = clone_armies(inf, imm)
+        imm_cpy.apply_boost(boost)
+        result = part1(inf_cpy, imm_cpy)
+        if result > 0 and imm_cpy.size() > 0:
+            break
+        boost += 1
+    return imm_cpy.size()
 
 
 def parse_input(fname: str) -> tuple[Army, Army]:
@@ -206,9 +225,10 @@ def main():
     sample_input = parse_input('input/sample_input.txt')
     main_input = parse_input('input/input.txt')
 
-    for inf, imm in (sample_input, main_input):
-        print("Part 1 answer =", part1(inf, imm))
-        print("Part 2 answer =", part2())
+    for inf1, imm1 in (sample_input, main_input):
+        inf2, imm2 = clone_armies(inf1, imm1)
+        print("Part 1 answer =", part1(inf1, imm1))
+        print("Part 2 answer =", part2(inf2, imm2))
         print()
 
 
