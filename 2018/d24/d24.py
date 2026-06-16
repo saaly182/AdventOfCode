@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -u
 
-import copy
 import re
 
 
@@ -8,9 +7,11 @@ class Group:
     def __init__(self, group_descriptor: tuple):
         assert len(group_descriptor) == 9
         self.group_id = None
-        self.unit_count = int(group_descriptor[0])
+        self.orig_unit_count = int(group_descriptor[0])
+        self.unit_count = self.orig_unit_count
         self.hitpoints = int(group_descriptor[1])
-        self.attack_damage = int(group_descriptor[6])
+        self.base_attack_damage = int(group_descriptor[6])
+        self.boost = 0
         self.attack_type = group_descriptor[7]
         self.initiative = int(group_descriptor[8])
         self.weaknesses = ()
@@ -24,6 +25,10 @@ class Group:
             elif group_descriptor[i] == 'immune':
                 self.immunities = tuple(group_descriptor[i + 1].split(', '))
         assert set(self.weaknesses).intersection(set(self.immunities)) == set()
+
+    @property
+    def attack_damage(self) -> int:
+        return self.base_attack_damage + self.boost
 
     def __str__(self):
         return (f'id={self.group_id} units={self.unit_count} '
@@ -52,12 +57,21 @@ class Army:
         self.groups = []
         self.enemy = None
 
+    @property
     def size(self):
         return sum([g.unit_count for g in self.groups])
 
     def add_group(self, g: Group) -> None:
         self.groups.append(g)
         g.group_id = len(self.groups)
+
+    def factory_reset(self):
+        # Reset this whole army to its original state; avoids needing to do
+        # a bunch of copy.deepcopy() calls.
+        for g in self.groups:
+            g.unit_count = g.orig_unit_count
+            g.boost = 0
+            g.target = None
 
     def show(self):
         print(f'Army: {self.name}')
@@ -94,33 +108,30 @@ class Army:
         for g in self.groups:
             g.target = None
 
-        available_targets = [eg for eg in self.enemy.groups
-                             if eg.unit_count > 0]
+        available_targets = {eg for eg in self.enemy.groups
+                             if eg.unit_count > 0}
 
-        for g in sorted(self.groups, key=self.__by_ep_and_init, reverse=True):
-            maxi = maxd = maxep = maxinit = -1
-            for i, eg in enumerate(available_targets):
+        attackers = [g for g in self.groups if g.unit_count > 0]
+
+        for g in sorted(attackers, key=self.__by_ep_and_init, reverse=True):
+            maxd = maxep = maxinit = -1
+            best_target = None
+            for eg in available_targets:
                 d = g.inflicted_damage(eg)
                 ep = eg.effective_power()
                 init = eg.initiative
                 if d != 0 and (d, ep, init) > (maxd, maxep, maxinit):
-                    maxi = i
                     maxd = d
                     maxep = ep
                     maxinit = init
-            if maxi >= 0:
-                g.target = available_targets[maxi]
-                del available_targets[maxi]
+                    best_target = eg
+            if best_target:
+                g.target = best_target
+                available_targets.remove(best_target)
 
     def apply_boost(self, boost: int) -> None:
         for g in self.groups:
-            g.attack_damage += boost
-
-
-def clone_armies(inf: Army, imm: Army) -> tuple[Army, Army]:
-    """Deep-copy both armies together so their .enemy
-    cross-links stay intact."""
-    return copy.deepcopy((inf, imm))
+            g.boost = boost
 
 
 def battle(inf: Army, imm: Army) -> None:
@@ -148,26 +159,23 @@ def part1(inf: Army, imm: Army) -> int:
     # actually kill any units.
 
     stalemate = False
-    inf_size1 = inf.size()
-    imm_size1 = imm.size()
 
-    while inf_size1 > 0 and imm_size1 > 0:
+    while inf.size > 0 and imm.size > 0 and not stalemate:
         inf.select_targets()
         imm.select_targets()
-        battle(inf, imm)
 
-        inf_size2 = inf.size()
-        imm_size2 = imm.size()
-        if (inf_size1, imm_size1) == (inf_size2, imm_size2):
-            # no units were killed in this battle; nothing will change
+        total_units_before = inf.size + imm.size
+        battle(inf, imm)
+        total_units_after = inf.size + imm.size
+        total_units_killed = total_units_before - total_units_after
+
+        if total_units_killed == 0:
             stalemate = True
-            break
-        inf_size1, imm_size1 = inf_size2, imm_size2
 
     if stalemate:
         result = -1
     else:
-        result = inf.size() + imm.size()
+        result = inf.size + imm.size  # one of these values must be zero
 
     return result
 
@@ -175,13 +183,15 @@ def part1(inf: Army, imm: Army) -> int:
 def part2(inf: Army, imm: Army) -> int:
     boost = 0
     while True:
-        inf_cpy, imm_cpy = clone_armies(inf, imm)
-        imm_cpy.apply_boost(boost)
-        result = part1(inf_cpy, imm_cpy)
-        if result > 0 and imm_cpy.size() > 0:
+        inf.factory_reset()
+        imm.factory_reset()
+        imm.apply_boost(boost)
+
+        result = part1(inf, imm)
+        if result > 0 and imm.size > 0:
             break
         boost += 1
-    return imm_cpy.size()
+    return imm.size
 
 
 def parse_input(fname: str) -> tuple[Army, Army]:
@@ -225,10 +235,11 @@ def main():
     sample_input = parse_input('input/sample_input.txt')
     main_input = parse_input('input/input.txt')
 
-    for inf1, imm1 in (sample_input, main_input):
-        inf2, imm2 = clone_armies(inf1, imm1)
-        print("Part 1 answer =", part1(inf1, imm1))
-        print("Part 2 answer =", part2(inf2, imm2))
+    for inf, imm in (sample_input, main_input):
+        print("Part 1 answer =", part1(inf, imm))
+        inf.factory_reset()
+        imm.factory_reset()
+        print("Part 2 answer =", part2(inf, imm))
         print()
 
 
