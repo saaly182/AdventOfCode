@@ -112,7 +112,7 @@ class Army:
                 del available_targets[maxi]
 
 
-def battle(inf: Army, imm: Army):
+def battle(inf: Army, imm: Army) -> None:
     """
     During the attacking phase, each group deals damage to the target it
     selected, if any. Groups attack in decreasing order of initiative,
@@ -132,12 +132,33 @@ def battle(inf: Army, imm: Army):
 
 
 def part1(inf: Army, imm: Army) -> int:
-    while inf.size() > 0 and imm.size() > 0:
+    # Note: We do have to watch out for the "stalemate" case where both armies
+    # still have units, but neither can do enough damage to the other to
+    # actually kill any units.
+
+    stalemate = False
+    inf_size1 = inf.size()
+    imm_size1 = imm.size()
+
+    while inf_size1 > 0 and imm_size1 > 0:
         inf.select_targets()
         imm.select_targets()
         battle(inf, imm)
 
-    return inf.size() + imm.size()
+        inf_size2 = inf.size()
+        imm_size2 = imm.size()
+        if (inf_size1, imm_size1) == (inf_size2, imm_size2):
+            # no units were killed in this battle; nothing will change
+            stalemate = True
+            break
+        inf_size1, imm_size1 = inf_size2, imm_size2
+
+    if stalemate:
+        result = -1
+    else:
+        result = inf.size() + imm.size()
+
+    return result
 
 
 def part2() -> int:
