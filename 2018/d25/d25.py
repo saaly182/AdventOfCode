@@ -5,12 +5,15 @@ import itertools
 
 def md(p1: tuple, p2: tuple) -> int:
     """Return the manhattan distance between two points."""
-    return sum([abs(i - j) for i, j in zip(p1, p2, strict=True)])
+    return sum(abs(i - j) for i, j in zip(p1, p2, strict=True))
 
 
 def part1(points: tuple) -> int:
-    """Build the connected components of the given list of points."""
-    next_cid = 1000  # "cid" is "component id"
+    """Return the number of connected components in the given points,
+    where two points are connected if their Manhattan distance is
+    at most 3."""
+
+    next_cid = 1000  # "component id"; starting at 1000 to easily spot cids
     p2c = {}  # point-to-component mapping
     c2p = {}  # component-to-points mapping
     for p in points:
