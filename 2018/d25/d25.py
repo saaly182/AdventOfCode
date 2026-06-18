@@ -27,7 +27,7 @@ def part1(points: tuple) -> int:
             c2p[c1].update(c2p[c2])
             del c2p[c2]
 
-    return len(set(p2c.values()))
+    return len(c2p)
 
 
 def parse_input(fname: str) -> tuple[tuple[int, int, int, int], ...]:
