@@ -17,7 +17,7 @@ def part1(points: tuple) -> int:
         next_cid += 1
 
     for a, b in itertools.combinations(points, 2):
-        if md(a, b) <= 3:
+        if p2c[a] != p2c[b] and md(a, b) <= 3:
             # merge everything into the lowest component number
             cid1, cid2 = min(p2c[a], p2c[b]), max(p2c[a], p2c[b])
             for p in p2c:
