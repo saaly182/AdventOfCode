@@ -10,19 +10,22 @@ def md(p1: tuple, p2: tuple) -> int:
 
 def part1(points: tuple) -> int:
     """Build the connected components of the given list of points."""
-    next_cid = 1000
+    next_cid = 1000  # "cid" is "component id"
     p2c = {}  # point-to-component mapping
+    c2p = {}  # component-to-points mapping
     for p in points:
         p2c[p] = next_cid
+        c2p[next_cid] = {p}
         next_cid += 1
 
     for a, b in itertools.combinations(points, 2):
         if p2c[a] != p2c[b] and md(a, b) <= 3:
             # merge everything into the lowest component number
-            cid1, cid2 = min(p2c[a], p2c[b]), max(p2c[a], p2c[b])
-            for p in p2c:
-                if p2c[p] == cid2:
-                    p2c[p] = cid1
+            c1, c2 = min(p2c[a], p2c[b]), max(p2c[a], p2c[b])
+            for p in c2p[c2]:
+                p2c[p] = c1
+            c2p[c1].update(c2p[c2])
+            del c2p[c2]
 
     return len(set(p2c.values()))
 
