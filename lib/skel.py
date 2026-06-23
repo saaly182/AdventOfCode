@@ -14,10 +14,12 @@ def parse_input(fname: str) -> tuple[str, ...]:
 
 
 def main():
-    sample_input = parse_input('input/sample_input.txt')
-    main_input = parse_input('input/input.txt')
-
-    for inp in (sample_input, main_input):
+    input_files = (
+        'input/sample_input.txt',
+        'input/input.txt',
+    )
+    for inpf in input_files:
+        inp = parse_input(inpf)
         print("Part 1 answer =", part1())
         print("Part 2 answer =", part2())
         print()
